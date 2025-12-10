@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yafa Mart - POS & Stock Manager</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <style>
+    :root {
+      --primary: #5B9CE5;
+      --primary-dark: #4A7FC4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1e293b;
+      --light: #f1f5f9;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      padding-bottom: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Mode Selector */
+    .mode-selector {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .mode-selector h2 {
+      margin-bottom: 16px;
+      font-size: 20px;
+      text-align: center;
+      color: var(--dark);
+    }
+
+    .mode-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .mode-btn {
+      padding: 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .mode-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .mode-btn .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    /* Hidden sections */
+    .mode-section {
+      display: none;
+    }
+
+    .mode-section.active {
+      display: block;
+    }
+
+    /* Scanner */
+    .scanner-section {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .scanner-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .scanner-controls input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .scanner-controls button {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #scanner-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #scanner-video {
+      width: 100%;
+      display: block;
+    }
+
+    .scanner-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 100px;
+      border: 2px solid var(--success);
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+    }
+
+    /* Kasir Mode */
+    .kasir-section {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+    }
+
+    @media (max-width: 968px) {
+      .kasir-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cart-area {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .cart-items {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      background: var(--light);
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .qty-btn:hover {
+      background: var(--border);
+    }
+
+    .cart-summary {
+      background: var(--light);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .summary-row.total {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      border-top: 2px solid var(--border);
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+
+    .payment-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 18px;
+      margin-bottom: 16px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .change-display {
+      background: var(--success);
+      color: white;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+      grid-column: 1 / -1;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    /* Stock Manager */
+    .stock-display {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .product-info {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .product-info h3 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .product-info .barcode-display {
+      font-family: monospace;
+      font-size: 18px;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .stock-badge {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 16px 0;
+    }
+
+    .stock-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stock-actions .btn {
+      padding: 20px;
+      font-size: 18px;
+    }
+
+    .stock-input-group {
+      margin-top: 20px;
+    }
+
+    .stock-input-group input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 18px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .stock-input-group textarea {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    /* Barcode Generator */
+    .barcode-generator {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-select {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .barcode-preview {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    #generated-barcode {
+      max-width: 100%;
+      margin: 20px auto;
+    }
+
+    .barcode-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Alert */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid var(--success);
+    }
+
+    .alert-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid var(--danger);
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 2px solid var(--primary);
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    .spinner {
+      border: 4px solid var(--border);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Mode Selector -->
+    <div class="mode-selector">
+      <h2>🏪 Yafa Mart - Sistem Toko</h2>
+      <div class="mode-buttons">
+        <button class="mode-btn active" data-mode="kasir">
+          <div class="icon">💰</div>
+          <div>Kasir POS</div>
+        </button>
+        <button class="mode-btn" data-mode="stock">
+          <div class="icon">📦</div>
+          <div>Kelola Stok</div>
+        </button>
+        <button class="mode-btn" data-mode="barcode">
+          <div class="icon">🏷️</div>
+          <div>Generate Barcode</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scanner Section (Shared) -->
+    <div class="scanner-section">
+      <h3 style="margin-bottom: 16px;">📷 Scanner Barcode</h3>
+      <div class="scanner-controls">
+        <input type="text" id="manualBarcode" placeholder="Atau ketik barcode manual...">
+        <button id="scanBtn">📷 Scan</button>
+        <button id="manualBtn">✓ Input</button>
+      </div>
+      <div id="scanner-container" class="hidden">
+        <video id="scanner-video"></video>
+        <div class="scanner-overlay"></div>
+      </div>
+      <div id="scanResult"></div>
+    </div>
+
+    <!-- KASIR MODE -->
+    <div id="mode-kasir" class="mode-section active">
+      <div class="kasir-section">
+        <!-- Left: Products/Actions -->
+        <div class="cart-area">
+          <div class="cart-header">
+            <h3>🛒 Keranjang Belanja</h3>
+            <button class="btn btn-danger" id="clearCartBtn">🗑️ Kosongkan</button>
+          </div>
+          <div class="cart-items" id="cartItems">
+            <div style="text-align: center; padding: 40px; color: #94a3b8;">
+              Scan produk untuk memulai transaksi
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Summary & Payment -->
+        <div>
+          <div class="cart-area">
+            <div class="cart-summary">
+              <div class="summary-row">
+                <span>Jumlah Item:</span>
+                <span id="totalItems">0</span>
+              </div>
+              <div class="summary-row total">
+                <span>TOTAL:</span>
+                <span id="totalPrice">Rp 0</span>
+              </div>
+            </div>
+
+            <input type="number" class="payment-input" id="paymentAmount" placeholder="Masukkan nominal bayar...">
+            
+            <div id="changeDisplay" class="change-display hidden">
+              Kembalian: <span id="changeAmount">Rp 0</span>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-success" id="processBtn">💳 Proses Pembayaran</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STOCK MANAGER MODE -->
+    <div id="mode-stock" class="mode-section">
+      <div class="stock-display">
+        <div id="stockInfo" class="product-info">
+          <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
+        </div>
+
+        <div id="stockActions" class="hidden">
+          <div class="stock-actions">
+            <button class="btn btn-success" id="addStockBtn">➕ Tambah Stok</button>
+            <button class="btn btn-danger" id="reduceStockBtn">➖ Kurangi Stok</button>
+          </div>
+
+          <div id="stockInputGroup" class="stock-input-group hidden">
+            <input type="number" id="stockQuantity" placeholder="Jumlah..." min="1">
+            <textarea id="stockNote" placeholder="Catatan (opsional)..." rows="3"></textarea>
+            <button class="btn btn-primary" id="confirmStockBtn" style="width: 100%;">✓ Konfirmasi Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARCODE GENERATOR MODE -->
+    <div id="mode-barcode" class="mode-section">
+      <div class="barcode-generator">
+        <h3 style="margin-bottom: 16px;">🏷️ Generate Barcode Produk</h3>
+        
+        <select class="product-select" id="productSelect">
+          <option value="">Pilih produk...</option>
+        </select>
+
+        <div class="barcode-preview">
+          <p style="color: #94a3b8; margin-bottom: 20px;">Preview barcode akan muncul di sini</p>
+          <svg id="generated-barcode"></svg>
+        </div>
+
+        <div class="barcode-actions">
+          <button class="btn btn-primary" id="generateBtn">🔄 Generate</button>
+          <button class="btn btn-success" id="printBarcodeBtn">🖨️ Print</button>
+          <button class="btn btn-secondary" id="downloadBarcodeBtn" style="grid-column: 1 / -1;">💾 Download PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_API = 'https://yafamart-sheet-api.baculum19.workers.dev';
+    const TELEGRAM_API = 'https://yafamart-telegram-api.baculum19.workers.dev';
+    
+    let ALL_PRODUCTS = [];
+    let CART = [];
+    let CURRENT_PRODUCT = null;
+    let SCANNER_ACTIVE = false;
+    let STOCK_OPERATION = null; // 'add' or 'reduce'
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+    
+    function formatRp(num) {
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.textContent = message;
+      
+      const container = document.querySelector('.container');
+      container.insertBefore(alertDiv, container.firstChild);
+      
+      setTimeout(() => alertDiv.remove(), 3000);
+    }
+
+    // ============================================
+    // LOAD PRODUCTS
+    // ============================================
+    
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${SHEET_API}/produk`);
+        const data = await res.json();
+        ALL_PRODUCTS = data.results || [];
+        
+        // Populate product select for barcode generator
+        const select = document.getElementById('productSelect');
+        select.innerHTML = '<option value="">Pilih produk...</option>';
+        ALL_PRODUCTS.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.id;
+          option.textContent = `${p.nama} - ${p.barcode || 'No Barcode'}`;
+          select.appendChild(option);
+        });
+        
+        console.log('Loaded products:', ALL_PRODUCTS.length);
+      } catch (err) {
+        console.error('Failed to load products:', err);
+        showAlert('Gagal memuat data produk', 'danger');
+      }
+    }
+
+    // ============================================
+    // MODE SWITCHING
+    // ============================================
+    
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        
+        // Update active button
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Show/hide sections
+        document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`mode-${mode}`).classList.add('active');
+        
+        // Stop scanner if active
+        if (SCANNER_ACTIVE) {
+          stopScanner();
+        }
+        
+        // Reset displays
+        document.getElementById('scanResult').innerHTML = '';
+        document.getElementById('manualBarcode').value = '';
+      });
+    });
+
+    // ============================================
+    // BARCODE SCANNER
+    // ============================================
+    
+    document.getElementById('scanBtn').addEventListener('click', () => {
+      if (SCANNER_ACTIVE) {
+        stopScanner();
+      } else {
+        startScanner();
+      }
+    });
+
+    function startScanner() {
+      const container = document.getElementById('scanner-container');
+      const btn = document.getElementById('scanBtn');
+      
+      container.classList.remove('hidden');
+      btn.textContent = '⏹️ Stop';
+      SCANNER_ACTIVE = true;
+
+      Quagga.init({
+        inputStream: {
+          name: "Live",
+          type: "LiveStream",
+          target: document.querySelector('#scanner-video'),
+          constraints: {
+            facingMode: "environment"
+          },
+        },
+        decoder: {
+          readers: [
+            "code_128_reader",
+            "ean_reader",
+            "ean_8_reader",
+            "code_39_reader",
+            "upc_reader",
+            "upc_e_reader"
+          ]
+        }
+      }, (err) => {
+        if (err) {
+          console.error(err);
+          showAlert('Gagal mengakses kamera', 'danger');
+          stopScanner();
+          return;
+        }
+        Quagga.start();
+      });
+
+      Quagga.onDetected((result) => {
+        const code = result.codeResult.code;
+        handleBarcodeScan(code);
+        stopScanner();
+      });
+    }
+
+    function stopScanner() {
+      if (SCANNER_ACTIVE) {
+        Quagga.stop();
+        document.getElementById('scanner-container').classList.add('hidden');
+        document.getElementById('scanBtn').textContent = '📷 Scan';
+        SCANNER_ACTIVE = false;
+      }
+    }
+
+    document.getElementById('manualBtn').addEventListener('click', () => {
+      const barcode = document.getElementById('manualBarcode').value.trim();
+      if (barcode) {
+        handleBarcodeScan(barcode);
+      } else {
+        showAlert('Masukkan barcode terlebih dahulu', 'danger');
+      }
+    });
+
+    document.getElementById('manualBarcode').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('manualBtn').click();
+      }
+    });
+
+    function handleBarcodeScan(barcode) {
+      console.log('Scanned:', barcode);
+      document.getElementById('manualBarcode').value = barcode;
+      
+      // Find product
+      const product = ALL_PRODUCTS.find(p => p.barcode === barcode);
+      
+      if (!product) {
+        showAlert(`Produk dengan barcode ${barcode} tidak ditemukan`, 'danger');
+        document.getElementById('scanResult').innerHTML = `
+          <div class="alert alert-danger">❌ Produk tidak ditemukan</div>
+        `;
+        return;
+      }
+
+      CURRENT_PRODUCT = product;
+      
+      document.getElementById('scanResult').innerHTML = `
+        <div class="alert alert-success">
+          ✓ <strong>${product.nama}</strong> - ${formatRp(product.harga)} - Stok: ${product.stok}
+        </div>
+      `;
+
+      // Route to appropriate handler
+      const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
+      
+      if (activeMode === 'kasir') {
+        addToCart(product);
+      } else if (activeMode === 'stock') {
+        showStockManager(product);
+      }
+    }
+
+    // ============================================
+    // KASIR MODE
+    // ============================================
+    
+    function addToCart(product, qty = 1) {
+      if (product.stok < qty) {
+        showAlert('Stok tidak cukup!', 'danger');
+        return;
+      }
+
+      const existing = CART.find(item => item.id === product.id);
+      
+      if (existing) {
+        if (existing.qty + qty > product.stok) {
+          showAlert('Stok tidak cukup!', 'danger');
+          return;
+        }
+        existing.qty += qty;
+      } else {
+        CART.push({
+          id: product.id,
+          nama: product.nama,
+          harga: product.harga,
+          qty: qty,
+          stok_available: product.stok
+        });
+      }
+
+      renderCart();
+      showAlert(`${product.nama} ditambahkan ke keranjang`, 'success');
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartItems');
+      
+      if (CART.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #94a3b8;">
+            Scan produk untuk memulai transaksi
+          </div>
+        `;
+        document.getElementById('totalItems').textContent = '0';
+        document.getElementById('totalPrice').textContent = 'Rp 0';
+        document.getElementById('changeDisplay').classList.add('hidden');
+        return;
+      }
+
+      container.innerHTML = '';
+      let totalQty = 0;
+      let totalPrice = 0;
+
+      CART.forEach(item => {
+        totalQty += item.qty;
+        totalPrice += item.harga * item.qty;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.nama}</div>
+            <div class="cart-item-price">${formatRp(item.harga)} × ${item.qty} = ${formatRp(item.harga * item.qty)}</div>
+          </div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span style="font-weight: 600; min-width: 30px; text-align: center;">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+            <button class="qty-btn" onclick="removeItem('${item.id}')" style="background: var(--danger); color: white;">×</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById('totalItems').textContent = totalQty;
+      document.getElementById('totalPrice').textContent = formatRp(totalPrice);
+
+      calculateChange();
+    }
+
+    window.changeQty = function(id, delta) {
+      const item = CART.find(i => i.id === id);
+      if (!item) return;
+
+      const newQty = item.qty + delta;
+      
+      if (newQty <= 0) {
+        removeItem(id);
+        return;
+      }
+
+      if (newQty > item.stok_available) {
+        showAlert('Stok tidak cukup!', 'danger');
+        return;
+      }
+
+      item.qty = newQty;
+      renderCart();
+    };
+
+    window.removeItem = function(id) {
+      CART = CART.filter(i => i.id !== id);
+      renderCart();
+    };
+
+    document.getElementById('clearCartBtn').addEventListener('click', () => {
+      if (CART.length === 0) return;
+      if (confirm('Kosongkan keranjang?')) {
+        CART = [];
+        renderCart();
+      }
+    });
+
+    document.getElementById('paymentAmount').addEventListener('input', calculateChange);
+
+    function calculateChange() {
+      const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+      const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
+      const change = payment - total;
+
+      const changeDisplay = document.getElementById('changeDisplay');
+      const changeAmount = document.getElementById('changeAmount');
+
+      if (payment >= total && total > 0) {
+        changeDisplay.classList.remove('hidden');
+        changeAmount.textContent = formatRp(change);
+        
+        if (change < 0) {
+          changeDisplay.style.background = 'var(--danger)';
+        } else {
+          changeDisplay.style.background = 'var(--success)';
+        }
+      } else {
+        changeDisplay.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('processBtn').addEventListener('click', async () => {
+      if (CART.length === 0) {
+        showAlert('Keranjang kosong!', 'danger');
+        return;
+      }
+
+      const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+      const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
+
+      if (payment < total) {
+        showAlert('Nominal pembayaran kurang!', 'danger');
+        return;
+      }
+
+      const btn = document.getElementById('processBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Memproses...';
+
+      try {
+        // Update stock for each item
+        for (const item of CART) {
+          const product = ALL_PRODUCTS.find(p => p.id === item.id);
+          const newStok = product.stok - item.qty;
+          
+          const res = await fetch(`${SHEET_API}/update_stok`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: item.id,
+              stok: newStok
+            })
+          });
+
+          if (!res.ok) throw new Error(`Gagal update stok ${item.nama}`);
+          
+          // Update local data
+          product.stok = newStok;
+        }
+
+        const change = payment - total;
+        
+        showAlert('✅ Transaksi berhasil!', 'success');
+        
+        // Print receipt
+        printReceipt(CART, total, payment, change);
+        
+        // Reset
+        CART = [];
+        renderCart();
+        document.getElementById('paymentAmount').value = '';
+        document.getElementById('manualBarcode').value = '';
+        document.getElementById('scanResult').innerHTML = '';
+
+      } catch (err) {
+        console.error(err);
+        showAlert('❌ Transaksi gagal: ' + err.message, 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💳 Proses Pembayaran';
+      }
+    });
+
+    function printReceipt(items, total, payment, change) {
+      const now = new Date();
+      const date = now.toLocaleDateString('id-ID');
+      const time = now.toLocaleTimeString('id-ID');
+      
+      let receipt = `
+========================================
+           YAFA MART
+      Toko Sembako Terpercaya
+========================================
+Tanggal: ${date}
+Waktu  : ${time}
+========================================
+`;
+      
+      items.forEach(item => {
+        receipt += `${item.nama}\n`;
+        receipt += `  ${item.qty} x ${formatRp(item.harga)} = ${formatRp(item.harga * item.qty)}\n`;
+      });
+      
+      receipt += `========================================\n`;
+      receipt += `TOTAL       : ${formatRp(total)}\n`;
+      receipt += `BAYAR       : ${formatRp(payment)}\n`;
+      receipt += `KEMBALIAN   : ${formatRp(change)}\n`;
+      receipt += `========================================\n`;
+      receipt += `   Terima kasih atas kunjungan Anda\n`;
+      receipt += `========================================\n`;
+      
+      console.log(receipt);
+      
+      // Create printable version
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Struk - Yafa Mart</title>
+            <style>
+              body { font-family: monospace; white-space: pre; padding: 20px; }
+              @media print { body { margin: 0; padding: 10px; } }
+            </style>
+          </head>
+          <body>${receipt}</body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    // ============================================
+    // STOCK MANAGER MODE
+    // ============================================
+    
+    function showStockManager(product) {
+      const container = document.getElementById('stockInfo');
+      container.innerHTML = `
+        <h3>${product.nama}</h3>
+        <div class="barcode-display">${product.barcode}</div>
+        <div class="stock-badge">${product.stok} ${product.satuan || 'pcs'}</div>
+        <p style="color: #64748b; margin-top: 8px;">${formatRp(product.harga)}</p>
+      `;
+      
+      document.getElementById('stockActions').classList.remove('hidden');
+      document.getElementById('stockInputGroup').classList.add('hidden');
+      STOCK_OPERATION = null;
+    }
+
+    document.getElementById('addStockBtn').addEventListener('click', () => {
+      STOCK_OPERATION = 'add';
+      document.getElementById('stockInputGroup').classList.remove('hidden');
+      document.getElementById('stockQuantity').value = '';
+      document.getElementById('stockNote').value = '';
+      document.getElementById('stockQuantity').focus();
+    });
+
+    document.getElementById('reduceStockBtn').addEventListener('click', () => {
+      STOCK_OPERATION = 'reduce';
+      document.getElementById('stockInputGroup').classList.remove('hidden');
+      document.getElementById('stockQuantity').value = '';
+      document.getElementById('stockNote').value = '';
+      document.getElementById('stockQuantity').focus();
+    });
+
+    document.getElementById('confirmStockBtn').addEventListener('click', async () => {
+      if (!CURRENT_PRODUCT || !STOCK_OPERATION) return;
+
+      const qty = parseInt(document.getElementById('stockQuantity').value);
+      const note = document.getElementById('stockNote').value.trim();
+
+      if (!qty || qty <= 0) {
+        showAlert('Masukkan jumlah yang valid', 'danger');
+        return;
+      }
+
+      const currentStock = CURRENT_PRODUCT.stok;
+      let newStock;
+
+      if (STOCK_OPERATION === 'add') {
+        newStock = currentStock + qty;
+      } else {
+        newStock = currentStock - qty;
+        if (newStock < 0) {
+          showAlert('Stok tidak boleh negatif!', 'danger');
+          return;
+        }
+      }
+
+      const btn = document.getElementById('confirmStockBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Memproses...';
+
+      try {
+        const res = await fetch(`${SHEET_API}/update_stok`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: CURRENT_PRODUCT.id,
+            stok: newStock
+          })
+        });
+
+        if (!res.ok) throw new Error('Gagal update stok');
+
+        // Update local data
+        CURRENT_PRODUCT.stok = newStock;
+        
+        showAlert(`✅ Stok berhasil di${STOCK_OPERATION === 'add' ? 'tambah' : 'kurangi'}`, 'success');
+        
+        // Refresh display
+        showStockManager(CURRENT_PRODUCT);
+        
+        // Clear inputs
+        document.getElementById('manualBarcode').value = '';
+        document.getElementById('scanResult').innerHTML = '';
+
+      } catch (err) {
+        console.error(err);
+        showAlert('❌ Gagal update stok', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✓ Konfirmasi Update';
+      }
+    });
+
+    // ============================================
+    // BARCODE GENERATOR MODE
+    // ============================================
+    
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      const productId = document.getElementById('productSelect').value;
+      if (!productId) {
+        showAlert('Pilih produk terlebih dahulu', 'danger');
+        return;
+      }
+
+      const product = ALL_PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+
+      let barcode = product.barcode;
+      
+      // Generate barcode if not exists
+      if (!barcode) {
+        barcode = 'YF' + String(product.id).padStart(8, '0');
+      }
+
+      try {
+        JsBarcode("#generated-barcode", barcode, {
+          format: "CODE128",
+          width: 2,
+          height: 80,
+          displayValue: true,
+          fontSize: 16,
+          margin: 10
+        });
+
+        showAlert(`Barcode generated: ${barcode}`, 'success');
+        
+        // Save barcode if newly generated
+        if (!product.barcode) {
+          updateProductBarcode(product.id, barcode);
+        }
+      } catch (err) {
+        console.error(err);
+        showAlert('Gagal generate barcode', 'danger');
+      }
+    });
+
+    async function updateProductBarcode(productId, barcode) {
+      try {
+        // Note: You'll need to add this endpoint to your worker
+        const res = await fetch(`${SHEET_API}/update_barcode`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: productId,
+            barcode: barcode
+          })
+        });
+
+        if (res.ok) {
+          const product = ALL_PRODUCTS.find(p => p.id === productId);
+          if (product) product.barcode = barcode;
+          console.log('Barcode saved to database');
+        }
+      } catch (err) {
+        console.error('Failed to save barcode:', err);
+      }
+    }
+
+    document.getElementById('printBarcodeBtn').addEventListener('click', () => {
+      const svg = document.getElementById('generated-barcode');
+      if (!svg.innerHTML) {
+        showAlert('Generate barcode terlebih dahulu', 'danger');
+        return;
+      }
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Barcode</title>
+            <style>
+              body { 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                height: 100vh; 
+                margin: 0; 
+              }
+              @media print { 
+                body { margin: 20px; } 
+              }
+            </style>
+          </head>
+          <body>
+            ${svg.outerHTML}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    });
+
+    document.getElementById('downloadBarcodeBtn').addEventListener('click', () => {
+      const svg = document.getElementById('generated-barcode');
+      if (!svg.innerHTML) {
+        showAlert('Generate barcode terlebih dahulu', 'danger');
+        return;
+      }
+
+      // Convert SVG to PNG
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const img = new Image();
+      
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'barcode.png';
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      };
+      
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    });
+
+    // ============================================
+    // INIT
+    // ============================================
+    
+    loadProducts();
+  </script>
+</body>
+</html>
