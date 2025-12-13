@@ -1149,10 +1149,15 @@
     }
 
     window.changeQty = function(id, delta) {
-      const item = CART.find(i => i.id === id);
-      if (!item) return;
+      console.log('changeQty called:', id, delta);
+      const item = CART.find(i => String(i.id) === String(id));
+      if (!item) {
+        console.error('Item not found in cart:', id);
+        return;
+      }
 
       const newQty = item.qty + delta;
+      console.log('New quantity:', newQty);
       
       if (newQty <= 0) {
         removeItem(id);
@@ -1169,7 +1174,8 @@
     };
 
     window.removeItem = function(id) {
-      CART = CART.filter(i => i.id !== id);
+      console.log('removeItem called:', id);
+      CART = CART.filter(i => String(i.id) !== String(id));
       renderCart();
     };
 
@@ -1618,6 +1624,18 @@ Waktu  : ${time}
     // ============================================
     // INIT
     // ============================================
+    
+    // Check if libraries are loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('Page loaded');
+      console.log('Quagga available:', typeof Quagga !== 'undefined');
+      console.log('JsBarcode available:', typeof JsBarcode !== 'undefined');
+      
+      if (typeof JsBarcode === 'undefined') {
+        console.error('JsBarcode library failed to load');
+        showAlert('⚠️ Library barcode gagal dimuat, reload halaman', 'warning');
+      }
+    });
     
     loadProducts();
   </script>
