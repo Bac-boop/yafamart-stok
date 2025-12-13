@@ -710,8 +710,8 @@
       <div id="newProductForm" class="new-product-form hidden">
         <h3 style="margin-bottom: 20px;">➕ Tambah Produk Baru</h3>
         <div class="form-group">
-          <label>Barcode (opsional - akan digenerate otomatis jika kosong)</label>
-          <input type="text" id="newBarcode" placeholder="Contoh: 8998889000123">
+          <label>Barcode *</label>
+          <input type="text" id="newBarcode" readonly style="background: var(--light);">
         </div>
         <div class="form-group">
           <label>Nama Produk *</label>
@@ -813,32 +813,6 @@
       setTimeout(() => alertDiv.remove(), 3000);
     }
 
-    function clearAllDisplays() {
-      // Clear scan result
-      document.getElementById('scanResult').innerHTML = '';
-      
-      // Clear search results
-      document.getElementById('searchResults').classList.add('hidden');
-      
-      // Hide stock actions
-      document.getElementById('stockActions').classList.add('hidden');
-      
-      // Hide stock input group
-      document.getElementById('stockInputGroup').classList.add('hidden');
-      
-      // Hide new product form
-      document.getElementById('newProductForm').classList.add('hidden');
-      
-      // Remove stock update info if exists
-      const oldInfo = document.getElementById('stockUpdateInfo');
-      if (oldInfo) oldInfo.remove();
-      
-      // Reset stock info display
-      document.getElementById('stockInfo').innerHTML = `
-        <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
-      `;
-    }
-
     // ============================================
     // LOAD PRODUCTS
     // ============================================
@@ -887,9 +861,17 @@
           stopScanner();
         }
         
-        // Clear all displays
-        clearAllDisplays();
+        // Reset displays
+        document.getElementById('scanResult').innerHTML = '';
+        document.getElementById('searchResults').classList.add('hidden');
         document.getElementById('manualBarcode').value = '';
+        
+        // Reset stock manager
+        document.getElementById('stockActions').classList.add('hidden');
+        document.getElementById('newProductForm').classList.add('hidden');
+        document.getElementById('stockInfo').innerHTML = `
+          <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
+        `;
       });
     });
 
@@ -959,7 +941,7 @@
     }
 
     // ============================================
-    // MANUAL INPUT & SEARCH
+    // MANUAL INPUT & SEARCH - FIXED LOGIC
     // ============================================
     
     document.getElementById('manualBtn').addEventListener('click', () => {
@@ -970,47 +952,32 @@
         return;
       }
 
-      // Clear all previous displays first
-      clearAllDisplays();
+      console.log('Input:', input); // Debug
       
       // Get active mode
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
+      console.log('Active Mode:', activeMode); // Debug
       
-      // Try to find product by barcode first
+      // Try to find product by barcode
       const productByBarcode = ALL_PRODUCTS.find(p => p.barcode === input);
+      console.log('Product found:', productByBarcode); // Debug
       
       if (productByBarcode) {
         // Product found with barcode
+        console.log('Product found - calling handleBarcodeScan');
         handleBarcodeScan(input);
-        return;
-      }
-      
-      // Product NOT found by barcode
-      // Try search by name
-      const productsByName = ALL_PRODUCTS.filter(p => 
-        p.nama.toLowerCase().includes(input.toLowerCase())
-      );
-      
-      if (productsByName.length > 0) {
-        // Found products by name
-        if (activeMode === 'kasir') {
-          searchProducts(input);
-        } else if (activeMode === 'stock') {
-          // Show first result in stock mode
-          handleBarcodeScan(productsByName[0].barcode);
-        }
       } else {
-        // No products found at all
+        // Product NOT found
+        console.log('Product not found - checking mode');
+        
         if (activeMode === 'stock') {
           // MODE KELOLA STOK → Show new product form
+          console.log('Mode is stock - showing new product form');
           showNewProductForm(input);
         } else if (activeMode === 'kasir') {
-          // MODE KASIR → Show not found message
-          document.getElementById('scanResult').innerHTML = `
-            <div class="alert alert-danger">
-              ❌ Produk "${input}" tidak ditemukan
-            </div>
-          `;
+          // MODE KASIR → Search by product name
+          console.log('Mode is kasir - searching products');
+          searchProducts(input);
         }
       }
     });
@@ -1026,6 +993,8 @@
     // ============================================
     
     function searchProducts(query) {
+      console.log('searchProducts called with:', query);
+      
       const results = ALL_PRODUCTS.filter(p => 
         p.nama.toLowerCase().includes(query.toLowerCase())
       );
@@ -1100,10 +1069,11 @@
     // ============================================
     
     function handleBarcodeScan(barcode) {
-      // Clear all previous displays first
-      clearAllDisplays();
-      
+      console.log('handleBarcodeScan called with:', barcode);
       document.getElementById('manualBarcode').value = barcode;
+      
+      // Hide search results if visible
+      document.getElementById('searchResults').classList.add('hidden');
       
       // Find product
       const product = ALL_PRODUCTS.find(p => p.barcode === barcode);
@@ -1111,8 +1081,10 @@
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
       
       if (!product) {
+        console.log('Product not found in handleBarcodeScan');
         // Product not found - check if in stock mode for new product creation
         if (activeMode === 'stock') {
+          console.log('Calling showNewProductForm from handleBarcodeScan');
           showNewProductForm(barcode);
         } else {
           showAlert(`Produk dengan barcode ${barcode} tidak ditemukan`, 'danger');
@@ -1407,40 +1379,35 @@ Waktu  : ${time}
     }
 
     // ============================================
-    // NEW PRODUCT FORM
+    // NEW PRODUCT FORM - FIXED
     // ============================================
     
-    function showNewProductForm(input) {
-      // Clear all displays first
-      clearAllDisplays();
+    function showNewProductForm(barcode) {
+      console.log('showNewProductForm called with barcode:', barcode);
       
       // Update info display
       document.getElementById('stockInfo').innerHTML = `
         <div class="alert alert-warning" style="text-align: center;">
           <p style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">⚠️ Produk Tidak Ditemukan</p>
-          <p style="font-size: 16px;">Input: <strong>${input}</strong></p>
+          <p style="font-size: 16px;">Barcode: <strong>${barcode}</strong></p>
           <p style="font-size: 14px; margin-top: 8px; opacity: 0.8;">Silakan tambahkan produk baru di bawah ini</p>
         </div>
       `;
       
+      // Hide stock actions
+      document.getElementById('stockActions').classList.add('hidden');
+      console.log('Stock actions hidden');
+      
       // Show new product form
       const form = document.getElementById('newProductForm');
       form.classList.remove('hidden');
+      console.log('New product form shown');
       
-      // Check if input is likely a barcode (numeric/alphanumeric) or product name
-      const isBarcode = /^[A-Z0-9]+$/i.test(input);
-      
-      if (isBarcode) {
-        // Input looks like barcode
-        document.getElementById('newBarcode').value = input;
-        document.getElementById('newNama').value = '';
-      } else {
-        // Input looks like product name
-        document.getElementById('newBarcode').value = '';
-        document.getElementById('newNama').value = input; // Auto-fill name
-      }
+      // Set barcode
+      document.getElementById('newBarcode').value = barcode;
       
       // Clear other fields
+      document.getElementById('newNama').value = '';
       document.getElementById('newHarga').value = '';
       document.getElementById('newSatuan').value = 'pcs';
       document.getElementById('newStok').value = '';
@@ -1449,13 +1416,13 @@ Waktu  : ${time}
       document.getElementById('newDeskripsi').value = '';
       document.getElementById('newCatatan').value = '';
       
-      // Focus on appropriate field
+      // Hide search results
+      document.getElementById('searchResults').classList.add('hidden');
+      
+      // Focus on nama field
       setTimeout(() => {
-        if (isBarcode) {
-          document.getElementById('newNama').focus();
-        } else {
-          document.getElementById('newBarcode').focus();
-        }
+        document.getElementById('newNama').focus();
+        console.log('Focused on nama field');
       }, 100);
     }
 
@@ -1486,14 +1453,13 @@ Waktu  : ${time}
         return;
       }
 
-      const oldStock = CURRENT_PRODUCT.stok;
-      const satuan = CURRENT_PRODUCT.satuan || 'pcs';
+      const currentStock = CURRENT_PRODUCT.stok;
       let newStock;
 
       if (STOCK_OPERATION === 'add') {
-        newStock = oldStock + qty;
+        newStock = currentStock + qty;
       } else {
-        newStock = oldStock - qty;
+        newStock = currentStock - qty;
         if (newStock < 0) {
           showAlert('Stok tidak boleh negatif!', 'danger');
           return;
@@ -1519,8 +1485,7 @@ Waktu  : ${time}
         // Update local data
         CURRENT_PRODUCT.stok = newStock;
         
-        // Show detailed update info
-        showStockUpdateInfo(oldStock, newStock, satuan, STOCK_OPERATION);
+        showAlert(`✅ Stok berhasil di${STOCK_OPERATION === 'add' ? 'tambah' : 'kurangi'}`, 'success');
         
         // Refresh display
         showStockManager(CURRENT_PRODUCT);
@@ -1538,50 +1503,19 @@ Waktu  : ${time}
       }
     });
 
-    function showStockUpdateInfo(oldStock, newStock, satuan, operation) {
-      // Remove old info box if exists
-      const oldInfo = document.getElementById('stockUpdateInfo');
-      if (oldInfo) oldInfo.remove();
-      
-      const diff = newStock - oldStock;
-      const color = operation === 'add' ? 'var(--success)' : 'var(--danger)';
-      const operationText = operation === 'add' ? 'tambah' : 'kurangi';
-      
-      const infoBox = document.createElement('div');
-      infoBox.id = 'stockUpdateInfo';
-      infoBox.style.cssText = `
-        background: ${color}22;
-        border: 2px solid ${color};
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 16px;
-      `;
-      infoBox.innerHTML = `
-        <div style="font-weight: 700; font-size: 16px; margin-bottom: 8px; color: ${color};">
-          ✅ Stok berhasil di${operationText}!
-        </div>
-        <div style="font-size: 14px; color: var(--dark); line-height: 1.6;">
-          <strong>📊 Detail Perubahan:</strong><br>
-          • Stok sebelumnya: <strong>${oldStock} ${satuan}</strong><br>
-          • Stok sekarang: <strong>${newStock} ${satuan}</strong><br>
-          • Perubahan: <strong style="color: ${color};">${diff > 0 ? '+' : ''}${diff} ${satuan}</strong>
-        </div>
-      `;
-      
-      // Insert before stock actions
-      const stockActions = document.getElementById('stockActions');
-      stockActions.parentNode.insertBefore(infoBox, stockActions);
-    }
-
     // Cancel new product
     document.getElementById('cancelNewProductBtn').addEventListener('click', () => {
-      clearAllDisplays();
+      document.getElementById('newProductForm').classList.add('hidden');
+      document.getElementById('stockInfo').innerHTML = `
+        <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
+      `;
       document.getElementById('manualBarcode').value = '';
+      document.getElementById('scanResult').innerHTML = '';
     });
 
     // Save new product
     document.getElementById('saveNewProductBtn').addEventListener('click', async () => {
-      let barcode = document.getElementById('newBarcode').value.trim();
+      const barcode = document.getElementById('newBarcode').value.trim();
       const nama = document.getElementById('newNama').value.trim();
       const harga = parseFloat(document.getElementById('newHarga').value);
       const satuan = document.getElementById('newSatuan').value;
@@ -1592,7 +1526,7 @@ Waktu  : ${time}
       const catatan = document.getElementById('newCatatan').value.trim();
 
       // Validation
-      if (!nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
+      if (!barcode || !nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
         showAlert('Lengkapi semua field yang wajib diisi (*)', 'danger');
         return;
       }
@@ -1602,24 +1536,15 @@ Waktu  : ${time}
         return;
       }
 
-      // Generate barcode if empty
-      if (!barcode) {
-        barcode = 'YF' + Date.now();
-        showAlert(`Barcode otomatis: ${barcode}`, 'info');
-      }
-
-      // Check barcode uniqueness
-      const existingProduct = ALL_PRODUCTS.find(p => p.barcode === barcode);
-      if (existingProduct) {
-        showAlert('❌ Barcode sudah digunakan oleh produk lain!', 'danger');
-        return;
-      }
-
       const btn = document.getElementById('saveNewProductBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Menyimpan...';
 
       try {
+        console.log('Sending data to API:', {
+          barcode, nama, harga, satuan, stok, kategori, lokasi_rak, deskripsi, catatan
+        });
+
         const res = await fetch(`${SHEET_API}/tambah_produk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1637,6 +1562,7 @@ Waktu  : ${time}
         });
 
         const result = await res.json();
+        console.log('API Response:', result);
 
         if (!res.ok || !result.success) {
           throw new Error(result.message || 'Gagal menyimpan produk');
@@ -1647,9 +1573,13 @@ Waktu  : ${time}
         // Reload products
         await loadProducts();
         
-        // Reset display
-        clearAllDisplays();
+        // Reset form
+        document.getElementById('newProductForm').classList.add('hidden');
+        document.getElementById('stockInfo').innerHTML = `
+          <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
+        `;
         document.getElementById('manualBarcode').value = '';
+        document.getElementById('scanResult').innerHTML = '';
 
       } catch (err) {
         console.error('Error saving product:', err);
