@@ -18,11 +18,13 @@
       --border: #e2e8f0;
     }
 
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -31,11 +33,13 @@
       padding-bottom: 20px;
     }
 
+
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
+
 
     /* Mode Selector */
     .mode-selector {
@@ -46,6 +50,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
+
     .mode-selector h2 {
       margin-bottom: 16px;
       font-size: 20px;
@@ -53,11 +58,13 @@
       color: var(--dark);
     }
 
+
     .mode-buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
     }
+
 
     .mode-btn {
       padding: 20px;
@@ -71,10 +78,12 @@
       font-weight: 600;
     }
 
+
     .mode-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
 
     .mode-btn.active {
       background: var(--primary);
@@ -82,19 +91,23 @@
       border-color: var(--primary);
     }
 
+
     .mode-btn .icon {
       font-size: 32px;
       margin-bottom: 8px;
     }
+
 
     /* Hidden sections */
     .mode-section {
       display: none;
     }
 
+
     .mode-section.active {
       display: block;
     }
+
 
     /* Scanner */
     .scanner-section {
@@ -105,11 +118,13 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
+
     .scanner-controls {
       display: flex;
       gap: 10px;
       margin-bottom: 16px;
     }
+
 
     .scanner-controls input {
       flex: 1;
@@ -118,6 +133,7 @@
       border-radius: 8px;
       font-size: 16px;
     }
+
 
     .scanner-controls button {
       padding: 12px 24px;
@@ -130,9 +146,11 @@
       transition: all 0.2s;
     }
 
+
     .scanner-controls button:hover {
       background: var(--primary-dark);
     }
+
 
     #scanner-container {
       position: relative;
@@ -144,10 +162,12 @@
       background: #000;
     }
 
+
     #scanner-video {
       width: 100%;
       display: block;
     }
+
 
     .scanner-overlay {
       position: absolute;
@@ -160,6 +180,7 @@
       box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
     }
 
+
     /* Search Results */
     .search-results {
       background: white;
@@ -169,6 +190,7 @@
       max-height: 400px;
       overflow-y: auto;
     }
+
 
     .search-result-item {
       padding: 16px;
@@ -181,13 +203,16 @@
       align-items: center;
     }
 
+
     .search-result-item:hover {
       background: var(--light);
     }
 
+
     .search-result-item:last-child {
       border-bottom: none;
     }
+
 
     .search-item-info h4 {
       margin-bottom: 4px;
@@ -195,11 +220,13 @@
       font-size: 16px;
     }
 
+
     .search-item-detail {
       font-size: 14px;
       color: #64748b;
       margin-bottom: 2px;
     }
+
 
     .search-item-stock {
       display: inline-block;
@@ -212,6 +239,7 @@
       margin-right: 8px;
     }
 
+
     .search-item-location {
       display: inline-block;
       padding: 4px 8px;
@@ -222,6 +250,7 @@
       font-weight: 600;
     }
 
+
     /* Kasir Mode */
     .kasir-section {
       display: grid;
@@ -229,11 +258,13 @@
       gap: 20px;
     }
 
+
     @media (max-width: 968px) {
       .kasir-section {
         grid-template-columns: 1fr;
       }
     }
+
 
     .cart-area {
       background: white;
@@ -241,6 +272,7 @@
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
 
     .cart-header {
       display: flex;
@@ -251,11 +283,13 @@
       border-bottom: 2px solid var(--border);
     }
 
+
     .cart-items {
       max-height: 400px;
       overflow-y: auto;
       margin-bottom: 16px;
     }
+
 
     .cart-item {
       display: flex;
@@ -265,25 +299,30 @@
       border-bottom: 1px solid var(--border);
     }
 
+
     .cart-item-info {
       flex: 1;
     }
+
 
     .cart-item-name {
       font-weight: 600;
       margin-bottom: 4px;
     }
 
+
     .cart-item-price {
       color: var(--primary);
       font-size: 14px;
     }
+
 
     .cart-item-qty {
       display: flex;
       align-items: center;
       gap: 8px;
     }
+
 
     .qty-btn {
       width: 32px;
@@ -297,9 +336,11 @@
       transition: all 0.2s;
     }
 
+
     .qty-btn:hover {
       background: var(--border);
     }
+
 
     .cart-summary {
       background: var(--light);
@@ -308,12 +349,14 @@
       margin-bottom: 16px;
     }
 
+
     .summary-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 8px;
       font-size: 16px;
     }
+
 
     .summary-row.total {
       font-size: 24px;
@@ -323,6 +366,7 @@
       padding-top: 12px;
       margin-top: 12px;
     }
+
 
     .payment-input {
       width: 100%;
@@ -335,6 +379,7 @@
       font-weight: 600;
     }
 
+
     .change-display {
       background: var(--success);
       color: white;
@@ -346,11 +391,13 @@
       margin-bottom: 16px;
     }
 
+
     .action-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
 
     .btn {
       padding: 16px;
@@ -362,19 +409,23 @@
       transition: all 0.2s;
     }
 
+
     .btn:active {
       transform: scale(0.98);
     }
+
 
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
+
     .btn-primary {
       background: var(--primary);
       color: white;
     }
+
 
     .btn-success {
       background: var(--success);
@@ -382,15 +433,18 @@
       grid-column: 1 / -1;
     }
 
+
     .btn-danger {
       background: var(--danger);
       color: white;
     }
 
+
     .btn-secondary {
       background: var(--light);
       color: var(--dark);
     }
+
 
     /* Stock Manager */
     .stock-display {
@@ -401,15 +455,18 @@
       margin-bottom: 20px;
     }
 
+
     .product-info {
       text-align: center;
       padding: 20px;
     }
 
+
     .product-info h3 {
       font-size: 24px;
       margin-bottom: 8px;
     }
+
 
     .product-info .barcode-display {
       font-family: monospace;
@@ -417,6 +474,7 @@
       color: var(--primary);
       margin-bottom: 16px;
     }
+
 
     .stock-badge {
       display: inline-block;
@@ -429,6 +487,7 @@
       margin: 16px 0;
     }
 
+
     .stock-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -436,14 +495,17 @@
       margin-top: 20px;
     }
 
+
     .stock-actions .btn {
       padding: 20px;
       font-size: 18px;
     }
 
+
     .stock-input-group {
       margin-top: 20px;
     }
+
 
     .stock-input-group input {
       width: 100%;
@@ -455,6 +517,7 @@
       text-align: center;
     }
 
+
     .stock-input-group textarea {
       width: 100%;
       padding: 16px;
@@ -465,6 +528,7 @@
       margin-bottom: 12px;
     }
 
+
     /* New Product Form */
     .new-product-form {
       background: white;
@@ -474,9 +538,11 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
+
     .form-group {
       margin-bottom: 16px;
     }
+
 
     .form-group label {
       display: block;
@@ -484,6 +550,7 @@
       font-weight: 600;
       color: var(--dark);
     }
+
 
     .form-group input,
     .form-group select,
@@ -495,10 +562,12 @@
       font-size: 14px;
     }
 
+
     .form-group textarea {
       resize: vertical;
       min-height: 80px;
     }
+
 
     .form-actions {
       display: grid;
@@ -507,6 +576,7 @@
       margin-top: 20px;
     }
 
+
     /* Barcode Generator */
     .barcode-generator {
       background: white;
@@ -514,6 +584,7 @@
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
 
     .product-select {
       width: 100%;
@@ -524,6 +595,7 @@
       margin-bottom: 16px;
     }
 
+
     .barcode-preview {
       text-align: center;
       padding: 40px;
@@ -533,16 +605,19 @@
       margin-bottom: 16px;
     }
 
+
     #generated-barcode {
       max-width: 100%;
       margin: 20px auto;
     }
+
 
     .barcode-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
+
 
     /* Alert */
     .alert {
@@ -552,11 +627,13 @@
       font-weight: 600;
     }
 
+
     .alert-success {
       background: #d1fae5;
       color: #065f46;
       border: 2px solid var(--success);
     }
+
 
     .alert-danger {
       background: #fee2e2;
@@ -564,17 +641,20 @@
       border: 2px solid var(--danger);
     }
 
+
     .alert-info {
       background: #dbeafe;
       color: #1e40af;
       border: 2px solid var(--primary);
     }
 
+
     .alert-warning {
       background: #fef3c7;
       color: #92400e;
       border: 2px solid var(--warning);
     }
+
 
     /* Loading */
     .loading {
@@ -583,6 +663,7 @@
       font-size: 18px;
       color: var(--primary);
     }
+
 
     .spinner {
       border: 4px solid var(--border);
@@ -594,10 +675,12 @@
       margin: 0 auto 16px;
     }
 
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
 
     .hidden {
       display: none !important;
@@ -625,6 +708,7 @@
       </div>
     </div>
 
+
     <!-- Scanner Section (Shared) -->
     <div class="scanner-section">
       <h3 style="margin-bottom: 16px;">📷 Scanner Barcode / Cari Produk</h3>
@@ -640,6 +724,7 @@
       <div id="scanResult"></div>
       <div id="searchResults" class="hidden"></div>
     </div>
+
 
     <!-- KASIR MODE -->
     <div id="mode-kasir" class="mode-section active">
@@ -657,6 +742,7 @@
           </div>
         </div>
 
+
         <!-- Right: Summary & Payment -->
         <div>
           <div class="cart-area">
@@ -671,11 +757,13 @@
               </div>
             </div>
 
+
             <input type="number" class="payment-input" id="paymentAmount" placeholder="Masukkan nominal bayar...">
             
             <div id="changeDisplay" class="change-display hidden">
               Kembalian: <span id="changeAmount">Rp 0</span>
             </div>
+
 
             <div class="action-buttons">
               <button class="btn btn-success" id="processBtn">💳 Proses Pembayaran</button>
@@ -685,6 +773,7 @@
       </div>
     </div>
 
+
     <!-- STOCK MANAGER MODE -->
     <div id="mode-stock" class="mode-section">
       <div class="stock-display">
@@ -692,11 +781,13 @@
           <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
         </div>
 
+
         <div id="stockActions" class="hidden">
           <div class="stock-actions">
             <button class="btn btn-success" id="addStockBtn">➕ Tambah Stok</button>
             <button class="btn btn-danger" id="reduceStockBtn">➖ Kurangi Stok</button>
           </div>
+
 
           <div id="stockInputGroup" class="stock-input-group hidden">
             <input type="number" id="stockQuantity" placeholder="Jumlah..." min="1">
@@ -705,6 +796,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- New Product Form -->
       <div id="newProductForm" class="new-product-form hidden">
@@ -761,6 +853,7 @@
       </div>
     </div>
 
+
     <!-- BARCODE GENERATOR MODE -->
     <div id="mode-barcode" class="mode-section">
       <div class="barcode-generator">
@@ -770,10 +863,12 @@
           <option value="">Pilih produk...</option>
         </select>
 
+
         <div class="barcode-preview">
           <p style="color: #94a3b8; margin-bottom: 20px;">Preview barcode akan muncul di sini</p>
           <svg id="generated-barcode"></svg>
         </div>
+
 
         <div class="barcode-actions">
           <button class="btn btn-primary" id="generateBtn">🔄 Generate</button>
@@ -783,6 +878,7 @@
       </div>
     </div>
   </div>
+
 
   <script>
     const SHEET_API = 'https://yafamart-stok.baculum19.workers.dev';
@@ -794,6 +890,7 @@
     let SCANNER_ACTIVE = false;
     let STOCK_OPERATION = null;
 
+
     // ============================================
     // UTILITY FUNCTIONS
     // ============================================
@@ -801,6 +898,7 @@
     function formatRp(num) {
       return 'Rp ' + Number(num).toLocaleString('id-ID');
     }
+
 
     function showAlert(message, type = 'info') {
       const alertDiv = document.createElement('div');
@@ -812,6 +910,7 @@
       
       setTimeout(() => alertDiv.remove(), 3000);
     }
+
 
     // ============================================
     // LOAD PRODUCTS
@@ -839,6 +938,7 @@
         showAlert('Gagal memuat data produk', 'danger');
       }
     }
+
 
     // ============================================
     // MODE SWITCHING
@@ -875,6 +975,7 @@
       });
     });
 
+
     // ============================================
     // BARCODE SCANNER
     // ============================================
@@ -887,6 +988,7 @@
       }
     });
 
+
     function startScanner() {
       const container = document.getElementById('scanner-container');
       const btn = document.getElementById('scanBtn');
@@ -894,6 +996,7 @@
       container.classList.remove('hidden');
       btn.textContent = '⏹️ Stop';
       SCANNER_ACTIVE = true;
+
 
       Quagga.init({
         inputStream: {
@@ -924,12 +1027,14 @@
         Quagga.start();
       });
 
+
       Quagga.onDetected((result) => {
         const code = result.codeResult.code;
         handleBarcodeScan(code);
         stopScanner();
       });
     }
+
 
     function stopScanner() {
       if (SCANNER_ACTIVE) {
@@ -939,6 +1044,7 @@
         SCANNER_ACTIVE = false;
       }
     }
+
 
     // ============================================
     // MANUAL INPUT & SEARCH - FIXED LOGIC
@@ -951,6 +1057,7 @@
         showAlert('Masukkan barcode atau nama produk', 'danger');
         return;
       }
+
 
       console.log('Input:', input); // Debug
       
@@ -982,11 +1089,13 @@
       }
     });
 
+
     document.getElementById('manualBarcode').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         document.getElementById('manualBtn').click();
       }
     });
+
 
     // ============================================
     // SEARCH PRODUCTS (For Kasir Mode)
@@ -998,6 +1107,7 @@
       const results = ALL_PRODUCTS.filter(p => 
         p.nama.toLowerCase().includes(query.toLowerCase())
       );
+
 
       const container = document.getElementById('searchResults');
       
@@ -1013,6 +1123,7 @@
         document.getElementById('scanResult').innerHTML = '';
         return;
       }
+
 
       let html = '<div class="search-results">';
       results.forEach(product => {
@@ -1032,18 +1143,22 @@
       });
       html += '</div>';
 
+
       container.innerHTML = html;
       container.classList.remove('hidden');
       document.getElementById('scanResult').innerHTML = '';
     }
 
+
     window.selectSearchResult = function(productId) {
       const product = ALL_PRODUCTS.find(p => p.id == productId);
       if (!product) return;
 
+
       // Hide search results
       document.getElementById('searchResults').classList.add('hidden');
       document.getElementById('manualBarcode').value = product.barcode || product.nama;
+
 
       // Handle based on active mode
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
@@ -1057,12 +1172,14 @@
         </div>
       `;
 
+
       if (activeMode === 'kasir') {
         addToCart(product);
       } else if (activeMode === 'stock') {
         showStockManager(product);
       }
     };
+
 
     // ============================================
     // HANDLE BARCODE SCAN
@@ -1095,6 +1212,7 @@
         return;
       }
 
+
       CURRENT_PRODUCT = product;
       
       document.getElementById('scanResult').innerHTML = `
@@ -1104,6 +1222,7 @@
         </div>
       `;
 
+
       // Route to appropriate handler
       if (activeMode === 'kasir') {
         addToCart(product);
@@ -1111,6 +1230,7 @@
         showStockManager(product);
       }
     }
+
 
     // ============================================
     // KASIR MODE
@@ -1121,6 +1241,7 @@
         showAlert('Stok tidak cukup!', 'danger');
         return;
       }
+
 
       const existing = CART.find(item => item.id == product.id);
       
@@ -1140,9 +1261,11 @@
         });
       }
 
+
       renderCart();
       showAlert(`${product.nama} ditambahkan ke keranjang`, 'success');
     }
+
 
     function renderCart() {
       const container = document.getElementById('cartItems');
@@ -1159,13 +1282,16 @@
         return;
       }
 
+
       container.innerHTML = '';
       let totalQty = 0;
       let totalPrice = 0;
 
+
       CART.forEach(item => {
         totalQty += item.qty;
         totalPrice += item.harga * item.qty;
+
 
         const div = document.createElement('div');
         div.className = 'cart-item';
@@ -1184,15 +1310,19 @@
         container.appendChild(div);
       });
 
+
       document.getElementById('totalItems').textContent = totalQty;
       document.getElementById('totalPrice').textContent = formatRp(totalPrice);
+
 
       calculateChange();
     }
 
+
     window.changeQty = function(id, delta) {
       const item = CART.find(i => i.id == id);
       if (!item) return;
+
 
       const newQty = item.qty + delta;
       
@@ -1201,19 +1331,23 @@
         return;
       }
 
+
       if (newQty > item.stok_available) {
         showAlert('Stok tidak cukup!', 'danger');
         return;
       }
 
+
       item.qty = newQty;
       renderCart();
     };
+
 
     window.removeItem = function(id) {
       CART = CART.filter(i => i.id != id);
       renderCart();
     };
+
 
     document.getElementById('clearCartBtn').addEventListener('click', () => {
       if (CART.length === 0) return;
@@ -1223,15 +1357,19 @@
       }
     });
 
+
     document.getElementById('paymentAmount').addEventListener('input', calculateChange);
+
 
     function calculateChange() {
       const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
       const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
       const change = payment - total;
 
+
       const changeDisplay = document.getElementById('changeDisplay');
       const changeAmount = document.getElementById('changeAmount');
+
 
       if (payment >= total && total > 0) {
         changeDisplay.classList.remove('hidden');
@@ -1247,23 +1385,28 @@
       }
     }
 
+
     document.getElementById('processBtn').addEventListener('click', async () => {
       if (CART.length === 0) {
         showAlert('Keranjang kosong!', 'danger');
         return;
       }
 
+
       const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
       const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
+
 
       if (payment < total) {
         showAlert('Nominal pembayaran kurang!', 'danger');
         return;
       }
 
+
       const btn = document.getElementById('processBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Memproses...';
+
 
       try {
         // Update stock for each item
@@ -1280,11 +1423,13 @@
             })
           });
 
+
           if (!res.ok) throw new Error(`Gagal update stok ${item.nama}`);
           
           // Update local data
           product.stok = newStok;
         }
+
 
         const change = payment - total;
         
@@ -1301,6 +1446,7 @@
         document.getElementById('scanResult').innerHTML = '';
         document.getElementById('searchResults').classList.add('hidden');
 
+
       } catch (err) {
         console.error(err);
         showAlert('❌ Transaksi gagal: ' + err.message, 'danger');
@@ -1309,6 +1455,7 @@
         btn.textContent = '💳 Proses Pembayaran';
       }
     });
+
 
     function printReceipt(items, total, payment, change) {
       const now = new Date();
@@ -1358,6 +1505,7 @@ Waktu  : ${time}
       printWindow.print();
     }
 
+
     // ============================================
     // STOCK MANAGER MODE
     // ============================================
@@ -1377,6 +1525,7 @@ Waktu  : ${time}
       document.getElementById('newProductForm').classList.add('hidden');
       STOCK_OPERATION = null;
     }
+
 
     // ============================================
     // NEW PRODUCT FORM - FIXED
@@ -1426,6 +1575,7 @@ Waktu  : ${time}
       }, 100);
     }
 
+
     document.getElementById('addStockBtn').addEventListener('click', () => {
       STOCK_OPERATION = 'add';
       document.getElementById('stockInputGroup').classList.remove('hidden');
@@ -1433,6 +1583,7 @@ Waktu  : ${time}
       document.getElementById('stockNote').value = '';
       document.getElementById('stockQuantity').focus();
     });
+
 
     document.getElementById('reduceStockBtn').addEventListener('click', () => {
       STOCK_OPERATION = 'reduce';
@@ -1442,19 +1593,24 @@ Waktu  : ${time}
       document.getElementById('stockQuantity').focus();
     });
 
+
     document.getElementById('confirmStockBtn').addEventListener('click', async () => {
       if (!CURRENT_PRODUCT || !STOCK_OPERATION) return;
 
+
       const qty = parseInt(document.getElementById('stockQuantity').value);
       const note = document.getElementById('stockNote').value.trim();
+
 
       if (!qty || qty <= 0) {
         showAlert('Masukkan jumlah yang valid', 'danger');
         return;
       }
 
+
       const currentStock = CURRENT_PRODUCT.stok;
       let newStock;
+
 
       if (STOCK_OPERATION === 'add') {
         newStock = currentStock + qty;
@@ -1466,9 +1622,11 @@ Waktu  : ${time}
         }
       }
 
+
       const btn = document.getElementById('confirmStockBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Memproses...';
+
 
       try {
         const res = await fetch(`${SHEET_API}/update_stok`, {
@@ -1480,7 +1638,9 @@ Waktu  : ${time}
           })
         });
 
+
         if (!res.ok) throw new Error('Gagal update stok');
+
 
         // Update local data
         CURRENT_PRODUCT.stok = newStock;
@@ -1494,6 +1654,7 @@ Waktu  : ${time}
         document.getElementById('manualBarcode').value = '';
         document.getElementById('scanResult').innerHTML = '';
 
+
       } catch (err) {
         console.error(err);
         showAlert('❌ Gagal update stok', 'danger');
@@ -1502,6 +1663,7 @@ Waktu  : ${time}
         btn.textContent = '✓ Konfirmasi Update';
       }
     });
+
 
     // Cancel new product
     document.getElementById('cancelNewProductBtn').addEventListener('click', () => {
@@ -1512,6 +1674,7 @@ Waktu  : ${time}
       document.getElementById('manualBarcode').value = '';
       document.getElementById('scanResult').innerHTML = '';
     });
+
 
     // Save new product
     document.getElementById('saveNewProductBtn').addEventListener('click', async () => {
@@ -1525,25 +1688,30 @@ Waktu  : ${time}
       const deskripsi = document.getElementById('newDeskripsi').value.trim();
       const catatan = document.getElementById('newCatatan').value.trim();
 
+
       // Validation
       if (!barcode || !nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
         showAlert('Lengkapi semua field yang wajib diisi (*)', 'danger');
         return;
       }
 
+
       if (harga <= 0 || stok < 0) {
         showAlert('Harga harus lebih dari 0 dan stok tidak boleh negatif', 'danger');
         return;
       }
 
+
       const btn = document.getElementById('saveNewProductBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Menyimpan...';
+
 
       try {
         console.log('Sending data to API:', {
           barcode, nama, harga, satuan, stok, kategori, lokasi_rak, deskripsi, catatan
         });
+
 
         const res = await fetch(`${SHEET_API}/tambah_produk`, {
           method: 'POST',
@@ -1561,12 +1729,15 @@ Waktu  : ${time}
           })
         });
 
+
         const result = await res.json();
         console.log('API Response:', result);
+
 
         if (!res.ok || !result.success) {
           throw new Error(result.message || 'Gagal menyimpan produk');
         }
+
 
         showAlert('✅ Produk baru berhasil ditambahkan!', 'success');
         
@@ -1581,6 +1752,7 @@ Waktu  : ${time}
         document.getElementById('manualBarcode').value = '';
         document.getElementById('scanResult').innerHTML = '';
 
+
       } catch (err) {
         console.error('Error saving product:', err);
         showAlert('❌ Gagal menyimpan: ' + err.message, 'danger');
@@ -1589,6 +1761,7 @@ Waktu  : ${time}
         btn.textContent = '💾 Simpan Produk';
       }
     });
+
 
     // ============================================
     // BARCODE GENERATOR MODE
@@ -1601,8 +1774,10 @@ Waktu  : ${time}
         return;
       }
 
+
       const product = ALL_PRODUCTS.find(p => p.id == productId);
       if (!product) return;
+
 
       let barcode = product.barcode;
       
@@ -1610,6 +1785,7 @@ Waktu  : ${time}
       if (!barcode) {
         barcode = 'YF' + String(product.id).padStart(8, '0');
       }
+
 
       try {
         JsBarcode("#generated-barcode", barcode, {
@@ -1620,6 +1796,7 @@ Waktu  : ${time}
           fontSize: 16,
           margin: 10
         });
+
 
         showAlert(`Barcode generated: ${barcode}`, 'success');
         
@@ -1633,6 +1810,7 @@ Waktu  : ${time}
       }
     });
 
+
     async function updateProductBarcode(productId, barcode) {
       try {
         const res = await fetch(`${SHEET_API}/update_barcode`, {
@@ -1644,6 +1822,7 @@ Waktu  : ${time}
           })
         });
 
+
         if (res.ok) {
           const product = ALL_PRODUCTS.find(p => p.id == productId);
           if (product) product.barcode = barcode;
@@ -1654,12 +1833,14 @@ Waktu  : ${time}
       }
     }
 
+
     document.getElementById('printBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
       if (!svg.innerHTML) {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
+
 
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
@@ -1688,12 +1869,14 @@ Waktu  : ${time}
       printWindow.print();
     });
 
+
     document.getElementById('downloadBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
       if (!svg.innerHTML) {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
+
 
       // Convert SVG to PNG
       const canvas = document.createElement('canvas');
@@ -1720,6 +1903,7 @@ Waktu  : ${time}
       
       img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
     });
+
 
     // ============================================
     // INIT
