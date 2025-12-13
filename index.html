@@ -570,6 +570,12 @@
       border: 2px solid var(--primary);
     }
 
+    .alert-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 2px solid var(--warning);
+    }
+
     /* Loading */
     .loading {
       text-align: center;
@@ -786,7 +792,7 @@
     let CART = [];
     let CURRENT_PRODUCT = null;
     let SCANNER_ACTIVE = false;
-    let STOCK_OPERATION = null; // 'add' or 'reduce'
+    let STOCK_OPERATION = null;
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -934,19 +940,45 @@
       }
     }
 
+    // ============================================
+    // MANUAL INPUT & SEARCH - FIXED LOGIC
+    // ============================================
+    
     document.getElementById('manualBtn').addEventListener('click', () => {
       const input = document.getElementById('manualBarcode').value.trim();
-      if (input) {
-        // Check if it's a barcode or search query
-        const product = ALL_PRODUCTS.find(p => p.barcode === input);
-        if (product) {
-          handleBarcodeScan(input);
-        } else {
-          // Search by name
+      
+      if (!input) {
+        showAlert('Masukkan barcode atau nama produk', 'danger');
+        return;
+      }
+
+      console.log('Input:', input); // Debug
+      
+      // Get active mode
+      const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
+      console.log('Active Mode:', activeMode); // Debug
+      
+      // Try to find product by barcode
+      const productByBarcode = ALL_PRODUCTS.find(p => p.barcode === input);
+      console.log('Product found:', productByBarcode); // Debug
+      
+      if (productByBarcode) {
+        // Product found with barcode
+        console.log('Product found - calling handleBarcodeScan');
+        handleBarcodeScan(input);
+      } else {
+        // Product NOT found
+        console.log('Product not found - checking mode');
+        
+        if (activeMode === 'stock') {
+          // MODE KELOLA STOK → Show new product form
+          console.log('Mode is stock - showing new product form');
+          showNewProductForm(input);
+        } else if (activeMode === 'kasir') {
+          // MODE KASIR → Search by product name
+          console.log('Mode is kasir - searching products');
           searchProducts(input);
         }
-      } else {
-        showAlert('Masukkan barcode atau nama produk', 'danger');
       }
     });
 
@@ -956,8 +988,13 @@
       }
     });
 
-    // Search products by name
+    // ============================================
+    // SEARCH PRODUCTS (For Kasir Mode)
+    // ============================================
+    
     function searchProducts(query) {
+      console.log('searchProducts called with:', query);
+      
       const results = ALL_PRODUCTS.filter(p => 
         p.nama.toLowerCase().includes(query.toLowerCase())
       );
@@ -1027,8 +1064,12 @@
       }
     };
 
+    // ============================================
+    // HANDLE BARCODE SCAN
+    // ============================================
+    
     function handleBarcodeScan(barcode) {
-      console.log('Scanned:', barcode);
+      console.log('handleBarcodeScan called with:', barcode);
       document.getElementById('manualBarcode').value = barcode;
       
       // Hide search results if visible
@@ -1040,8 +1081,10 @@
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
       
       if (!product) {
+        console.log('Product not found in handleBarcodeScan');
         // Product not found - check if in stock mode for new product creation
         if (activeMode === 'stock') {
+          console.log('Calling showNewProductForm from handleBarcodeScan');
           showNewProductForm(barcode);
         } else {
           showAlert(`Produk dengan barcode ${barcode} tidak ditemukan`, 'danger');
@@ -1335,16 +1378,30 @@ Waktu  : ${time}
       STOCK_OPERATION = null;
     }
 
+    // ============================================
+    // NEW PRODUCT FORM - FIXED
+    // ============================================
+    
     function showNewProductForm(barcode) {
+      console.log('showNewProductForm called with barcode:', barcode);
+      
+      // Update info display
       document.getElementById('stockInfo').innerHTML = `
-        <p style="color: #f59e0b; font-size: 18px; font-weight: 600;">⚠️ Produk tidak ditemukan</p>
-        <p style="color: #64748b; font-size: 14px; margin-top: 8px;">Barcode: ${barcode}</p>
+        <div class="alert alert-warning" style="text-align: center;">
+          <p style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">⚠️ Produk Tidak Ditemukan</p>
+          <p style="font-size: 16px;">Barcode: <strong>${barcode}</strong></p>
+          <p style="font-size: 14px; margin-top: 8px; opacity: 0.8;">Silakan tambahkan produk baru di bawah ini</p>
+        </div>
       `;
       
+      // Hide stock actions
       document.getElementById('stockActions').classList.add('hidden');
+      console.log('Stock actions hidden');
       
+      // Show new product form
       const form = document.getElementById('newProductForm');
       form.classList.remove('hidden');
+      console.log('New product form shown');
       
       // Set barcode
       document.getElementById('newBarcode').value = barcode;
@@ -1359,9 +1416,13 @@ Waktu  : ${time}
       document.getElementById('newDeskripsi').value = '';
       document.getElementById('newCatatan').value = '';
       
+      // Hide search results
+      document.getElementById('searchResults').classList.add('hidden');
+      
       // Focus on nama field
       setTimeout(() => {
         document.getElementById('newNama').focus();
+        console.log('Focused on nama field');
       }, 100);
     }
 
@@ -1465,13 +1526,13 @@ Waktu  : ${time}
       const catatan = document.getElementById('newCatatan').value.trim();
 
       // Validation
-      if (!nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
+      if (!barcode || !nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
         showAlert('Lengkapi semua field yang wajib diisi (*)', 'danger');
         return;
       }
 
       if (harga <= 0 || stok < 0) {
-        showAlert('Harga dan stok harus valid', 'danger');
+        showAlert('Harga harus lebih dari 0 dan stok tidak boleh negatif', 'danger');
         return;
       }
 
@@ -1480,6 +1541,10 @@ Waktu  : ${time}
       btn.textContent = '⏳ Menyimpan...';
 
       try {
+        console.log('Sending data to API:', {
+          barcode, nama, harga, satuan, stok, kategori, lokasi_rak, deskripsi, catatan
+        });
+
         const res = await fetch(`${SHEET_API}/tambah_produk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1497,6 +1562,7 @@ Waktu  : ${time}
         });
 
         const result = await res.json();
+        console.log('API Response:', result);
 
         if (!res.ok || !result.success) {
           throw new Error(result.message || 'Gagal menyimpan produk');
@@ -1516,7 +1582,7 @@ Waktu  : ${time}
         document.getElementById('scanResult').innerHTML = '';
 
       } catch (err) {
-        console.error(err);
+        console.error('Error saving product:', err);
         showAlert('❌ Gagal menyimpan: ' + err.message, 'danger');
       } finally {
         btn.disabled = false;
