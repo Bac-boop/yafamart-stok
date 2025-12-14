@@ -18,13 +18,11 @@
       --border: #e2e8f0;
     }
 
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -33,13 +31,11 @@
       padding-bottom: 20px;
     }
 
-
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
-
 
     /* Mode Selector */
     .mode-selector {
@@ -50,7 +46,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-
     .mode-selector h2 {
       margin-bottom: 16px;
       font-size: 20px;
@@ -58,13 +53,11 @@
       color: var(--dark);
     }
 
-
     .mode-buttons {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
     }
-
 
     .mode-btn {
       padding: 20px;
@@ -78,12 +71,10 @@
       font-weight: 600;
     }
 
-
     .mode-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
 
     .mode-btn.active {
       background: var(--primary);
@@ -91,23 +82,19 @@
       border-color: var(--primary);
     }
 
-
     .mode-btn .icon {
       font-size: 32px;
       margin-bottom: 8px;
     }
-
 
     /* Hidden sections */
     .mode-section {
       display: none;
     }
 
-
     .mode-section.active {
       display: block;
     }
-
 
     /* Scanner */
     .scanner-section {
@@ -118,13 +105,11 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-
     .scanner-controls {
       display: flex;
       gap: 10px;
       margin-bottom: 16px;
     }
-
 
     .scanner-controls input {
       flex: 1;
@@ -133,7 +118,6 @@
       border-radius: 8px;
       font-size: 16px;
     }
-
 
     .scanner-controls button {
       padding: 12px 24px;
@@ -146,11 +130,9 @@
       transition: all 0.2s;
     }
 
-
     .scanner-controls button:hover {
       background: var(--primary-dark);
     }
-
 
     #scanner-container {
       position: relative;
@@ -162,12 +144,10 @@
       background: #000;
     }
 
-
     #scanner-video {
       width: 100%;
       display: block;
     }
-
 
     .scanner-overlay {
       position: absolute;
@@ -180,7 +160,6 @@
       box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
     }
 
-
     /* Search Results */
     .search-results {
       background: white;
@@ -190,7 +169,6 @@
       max-height: 400px;
       overflow-y: auto;
     }
-
 
     .search-result-item {
       padding: 16px;
@@ -203,16 +181,13 @@
       align-items: center;
     }
 
-
     .search-result-item:hover {
       background: var(--light);
     }
 
-
     .search-result-item:last-child {
       border-bottom: none;
     }
-
 
     .search-item-info h4 {
       margin-bottom: 4px;
@@ -220,13 +195,11 @@
       font-size: 16px;
     }
 
-
     .search-item-detail {
       font-size: 14px;
       color: #64748b;
       margin-bottom: 2px;
     }
-
 
     .search-item-stock {
       display: inline-block;
@@ -239,7 +212,6 @@
       margin-right: 8px;
     }
 
-
     .search-item-location {
       display: inline-block;
       padding: 4px 8px;
@@ -250,7 +222,6 @@
       font-weight: 600;
     }
 
-
     /* Kasir Mode */
     .kasir-section {
       display: grid;
@@ -258,13 +229,11 @@
       gap: 20px;
     }
 
-
     @media (max-width: 968px) {
       .kasir-section {
         grid-template-columns: 1fr;
       }
     }
-
 
     .cart-area {
       background: white;
@@ -272,7 +241,6 @@
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
 
     .cart-header {
       display: flex;
@@ -283,13 +251,11 @@
       border-bottom: 2px solid var(--border);
     }
 
-
     .cart-items {
       max-height: 400px;
       overflow-y: auto;
       margin-bottom: 16px;
     }
-
 
     .cart-item {
       display: flex;
@@ -299,30 +265,25 @@
       border-bottom: 1px solid var(--border);
     }
 
-
     .cart-item-info {
       flex: 1;
     }
-
 
     .cart-item-name {
       font-weight: 600;
       margin-bottom: 4px;
     }
 
-
     .cart-item-price {
       color: var(--primary);
       font-size: 14px;
     }
-
 
     .cart-item-qty {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
 
     .qty-btn {
       width: 32px;
@@ -336,11 +297,9 @@
       transition: all 0.2s;
     }
 
-
     .qty-btn:hover {
       background: var(--border);
     }
-
 
     .cart-summary {
       background: var(--light);
@@ -349,14 +308,12 @@
       margin-bottom: 16px;
     }
 
-
     .summary-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 8px;
       font-size: 16px;
     }
-
 
     .summary-row.total {
       font-size: 24px;
@@ -366,7 +323,6 @@
       padding-top: 12px;
       margin-top: 12px;
     }
-
 
     .payment-input {
       width: 100%;
@@ -379,7 +335,6 @@
       font-weight: 600;
     }
 
-
     .change-display {
       background: var(--success);
       color: white;
@@ -391,13 +346,11 @@
       margin-bottom: 16px;
     }
 
-
     .action-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-
 
     .btn {
       padding: 16px;
@@ -409,23 +362,19 @@
       transition: all 0.2s;
     }
 
-
     .btn:active {
       transform: scale(0.98);
     }
-
 
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-
     .btn-primary {
       background: var(--primary);
       color: white;
     }
-
 
     .btn-success {
       background: var(--success);
@@ -433,18 +382,15 @@
       grid-column: 1 / -1;
     }
 
-
     .btn-danger {
       background: var(--danger);
       color: white;
     }
 
-
     .btn-secondary {
       background: var(--light);
       color: var(--dark);
     }
-
 
     /* Stock Manager */
     .stock-display {
@@ -455,18 +401,15 @@
       margin-bottom: 20px;
     }
 
-
     .product-info {
       text-align: center;
       padding: 20px;
     }
 
-
     .product-info h3 {
       font-size: 24px;
       margin-bottom: 8px;
     }
-
 
     .product-info .barcode-display {
       font-family: monospace;
@@ -474,7 +417,6 @@
       color: var(--primary);
       margin-bottom: 16px;
     }
-
 
     .stock-badge {
       display: inline-block;
@@ -487,7 +429,6 @@
       margin: 16px 0;
     }
 
-
     .stock-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -495,17 +436,14 @@
       margin-top: 20px;
     }
 
-
     .stock-actions .btn {
       padding: 20px;
       font-size: 18px;
     }
 
-
     .stock-input-group {
       margin-top: 20px;
     }
-
 
     .stock-input-group input {
       width: 100%;
@@ -517,7 +455,6 @@
       text-align: center;
     }
 
-
     .stock-input-group textarea {
       width: 100%;
       padding: 16px;
@@ -528,7 +465,6 @@
       margin-bottom: 12px;
     }
 
-
     /* New Product Form */
     .new-product-form {
       background: white;
@@ -538,11 +474,9 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-
     .form-group {
       margin-bottom: 16px;
     }
-
 
     .form-group label {
       display: block;
@@ -550,7 +484,6 @@
       font-weight: 600;
       color: var(--dark);
     }
-
 
     .form-group input,
     .form-group select,
@@ -562,12 +495,10 @@
       font-size: 14px;
     }
 
-
     .form-group textarea {
       resize: vertical;
       min-height: 80px;
     }
-
 
     .form-actions {
       display: grid;
@@ -576,7 +507,6 @@
       margin-top: 20px;
     }
 
-
     /* Barcode Generator */
     .barcode-generator {
       background: white;
@@ -584,7 +514,6 @@
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
 
     .product-select {
       width: 100%;
@@ -595,7 +524,6 @@
       margin-bottom: 16px;
     }
 
-
     .barcode-preview {
       text-align: center;
       padding: 40px;
@@ -605,19 +533,16 @@
       margin-bottom: 16px;
     }
 
-
     #generated-barcode {
       max-width: 100%;
       margin: 20px auto;
     }
-
 
     .barcode-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-
 
     /* Alert */
     .alert {
@@ -627,13 +552,11 @@
       font-weight: 600;
     }
 
-
     .alert-success {
       background: #d1fae5;
       color: #065f46;
       border: 2px solid var(--success);
     }
-
 
     .alert-danger {
       background: #fee2e2;
@@ -641,20 +564,17 @@
       border: 2px solid var(--danger);
     }
 
-
     .alert-info {
       background: #dbeafe;
       color: #1e40af;
       border: 2px solid var(--primary);
     }
 
-
     .alert-warning {
       background: #fef3c7;
       color: #92400e;
       border: 2px solid var(--warning);
     }
-
 
     /* Loading */
     .loading {
@@ -663,7 +583,6 @@
       font-size: 18px;
       color: var(--primary);
     }
-
 
     .spinner {
       border: 4px solid var(--border);
@@ -675,12 +594,10 @@
       margin: 0 auto 16px;
     }
 
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
 
     .hidden {
       display: none !important;
@@ -708,7 +625,6 @@
       </div>
     </div>
 
-
     <!-- Scanner Section (Shared) -->
     <div class="scanner-section">
       <h3 style="margin-bottom: 16px;">📷 Scanner Barcode / Cari Produk</h3>
@@ -724,7 +640,6 @@
       <div id="scanResult"></div>
       <div id="searchResults" class="hidden"></div>
     </div>
-
 
     <!-- KASIR MODE -->
     <div id="mode-kasir" class="mode-section active">
@@ -742,7 +657,6 @@
           </div>
         </div>
 
-
         <!-- Right: Summary & Payment -->
         <div>
           <div class="cart-area">
@@ -757,13 +671,11 @@
               </div>
             </div>
 
-
             <input type="number" class="payment-input" id="paymentAmount" placeholder="Masukkan nominal bayar...">
             
             <div id="changeDisplay" class="change-display hidden">
               Kembalian: <span id="changeAmount">Rp 0</span>
             </div>
-
 
             <div class="action-buttons">
               <button class="btn btn-success" id="processBtn">💳 Proses Pembayaran</button>
@@ -773,7 +685,6 @@
       </div>
     </div>
 
-
     <!-- STOCK MANAGER MODE -->
     <div id="mode-stock" class="mode-section">
       <div class="stock-display">
@@ -781,13 +692,11 @@
           <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
         </div>
 
-
         <div id="stockActions" class="hidden">
           <div class="stock-actions">
             <button class="btn btn-success" id="addStockBtn">➕ Tambah Stok</button>
             <button class="btn btn-danger" id="reduceStockBtn">➖ Kurangi Stok</button>
           </div>
-
 
           <div id="stockInputGroup" class="stock-input-group hidden">
             <input type="number" id="stockQuantity" placeholder="Jumlah..." min="1">
@@ -797,13 +706,12 @@
         </div>
       </div>
 
-
       <!-- New Product Form -->
       <div id="newProductForm" class="new-product-form hidden">
         <h3 style="margin-bottom: 20px;">➕ Tambah Produk Baru</h3>
         <div class="form-group">
-          <label>Barcode *</label>
-          <input type="text" id="newBarcode" readonly style="background: var(--light);">
+          <label>Barcode (opsional - akan digenerate otomatis jika kosong)</label>
+          <input type="text" id="newBarcode" placeholder="Contoh: 8998889000123">
         </div>
         <div class="form-group">
           <label>Nama Produk *</label>
@@ -853,7 +761,6 @@
       </div>
     </div>
 
-
     <!-- BARCODE GENERATOR MODE -->
     <div id="mode-barcode" class="mode-section">
       <div class="barcode-generator">
@@ -863,12 +770,10 @@
           <option value="">Pilih produk...</option>
         </select>
 
-
         <div class="barcode-preview">
           <p style="color: #94a3b8; margin-bottom: 20px;">Preview barcode akan muncul di sini</p>
           <svg id="generated-barcode"></svg>
         </div>
-
 
         <div class="barcode-actions">
           <button class="btn btn-primary" id="generateBtn">🔄 Generate</button>
@@ -878,7 +783,6 @@
       </div>
     </div>
   </div>
-
 
   <script>
     const SHEET_API = 'https://yafamart-stok.baculum19.workers.dev';
@@ -890,7 +794,6 @@
     let SCANNER_ACTIVE = false;
     let STOCK_OPERATION = null;
 
-
     // ============================================
     // UTILITY FUNCTIONS
     // ============================================
@@ -898,7 +801,6 @@
     function formatRp(num) {
       return 'Rp ' + Number(num).toLocaleString('id-ID');
     }
-
 
     function showAlert(message, type = 'info') {
       const alertDiv = document.createElement('div');
@@ -911,6 +813,31 @@
       setTimeout(() => alertDiv.remove(), 3000);
     }
 
+    function clearAllDisplays() {
+      // Clear scan result
+      document.getElementById('scanResult').innerHTML = '';
+      
+      // Clear search results
+      document.getElementById('searchResults').classList.add('hidden');
+      
+      // Hide stock actions
+      document.getElementById('stockActions').classList.add('hidden');
+      
+      // Hide stock input group
+      document.getElementById('stockInputGroup').classList.add('hidden');
+      
+      // Hide new product form
+      document.getElementById('newProductForm').classList.add('hidden');
+      
+      // Remove stock update info if exists
+      const oldInfo = document.getElementById('stockUpdateInfo');
+      if (oldInfo) oldInfo.remove();
+      
+      // Reset stock info display
+      document.getElementById('stockInfo').innerHTML = `
+        <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
+      `;
+    }
 
     // ============================================
     // LOAD PRODUCTS
@@ -939,7 +866,6 @@
       }
     }
 
-
     // ============================================
     // MODE SWITCHING
     // ============================================
@@ -961,20 +887,11 @@
           stopScanner();
         }
         
-        // Reset displays
-        document.getElementById('scanResult').innerHTML = '';
-        document.getElementById('searchResults').classList.add('hidden');
+        // Clear all displays
+        clearAllDisplays();
         document.getElementById('manualBarcode').value = '';
-        
-        // Reset stock manager
-        document.getElementById('stockActions').classList.add('hidden');
-        document.getElementById('newProductForm').classList.add('hidden');
-        document.getElementById('stockInfo').innerHTML = `
-          <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
-        `;
       });
     });
-
 
     // ============================================
     // BARCODE SCANNER
@@ -988,7 +905,6 @@
       }
     });
 
-
     function startScanner() {
       const container = document.getElementById('scanner-container');
       const btn = document.getElementById('scanBtn');
@@ -996,7 +912,6 @@
       container.classList.remove('hidden');
       btn.textContent = '⏹️ Stop';
       SCANNER_ACTIVE = true;
-
 
       Quagga.init({
         inputStream: {
@@ -1027,14 +942,12 @@
         Quagga.start();
       });
 
-
       Quagga.onDetected((result) => {
         const code = result.codeResult.code;
         handleBarcodeScan(code);
         stopScanner();
       });
     }
-
 
     function stopScanner() {
       if (SCANNER_ACTIVE) {
@@ -1045,9 +958,8 @@
       }
     }
 
-
     // ============================================
-    // MANUAL INPUT & SEARCH - FIXED LOGIC
+    // MANUAL INPUT & SEARCH
     // ============================================
     
     document.getElementById('manualBtn').addEventListener('click', () => {
@@ -1058,37 +970,50 @@
         return;
       }
 
-
-      console.log('Input:', input); // Debug
+      // Clear all previous displays first
+      clearAllDisplays();
       
       // Get active mode
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
-      console.log('Active Mode:', activeMode); // Debug
       
-      // Try to find product by barcode
+      // Try to find product by barcode first
       const productByBarcode = ALL_PRODUCTS.find(p => p.barcode === input);
-      console.log('Product found:', productByBarcode); // Debug
       
       if (productByBarcode) {
         // Product found with barcode
-        console.log('Product found - calling handleBarcodeScan');
         handleBarcodeScan(input);
+        return;
+      }
+      
+      // Product NOT found by barcode
+      // Try search by name
+      const productsByName = ALL_PRODUCTS.filter(p => 
+        p.nama.toLowerCase().includes(input.toLowerCase())
+      );
+      
+      if (productsByName.length > 0) {
+        // Found products by name
+        if (activeMode === 'kasir') {
+          searchProducts(input);
+        } else if (activeMode === 'stock') {
+          // Show first result in stock mode
+          handleBarcodeScan(productsByName[0].barcode);
+        }
       } else {
-        // Product NOT found
-        console.log('Product not found - checking mode');
-        
+        // No products found at all
         if (activeMode === 'stock') {
           // MODE KELOLA STOK → Show new product form
-          console.log('Mode is stock - showing new product form');
           showNewProductForm(input);
         } else if (activeMode === 'kasir') {
-          // MODE KASIR → Search by product name
-          console.log('Mode is kasir - searching products');
-          searchProducts(input);
+          // MODE KASIR → Show not found message
+          document.getElementById('scanResult').innerHTML = `
+            <div class="alert alert-danger">
+              ❌ Produk "${input}" tidak ditemukan
+            </div>
+          `;
         }
       }
     });
-
 
     document.getElementById('manualBarcode').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -1096,18 +1021,14 @@
       }
     });
 
-
     // ============================================
     // SEARCH PRODUCTS (For Kasir Mode)
     // ============================================
     
     function searchProducts(query) {
-      console.log('searchProducts called with:', query);
-      
       const results = ALL_PRODUCTS.filter(p => 
         p.nama.toLowerCase().includes(query.toLowerCase())
       );
-
 
       const container = document.getElementById('searchResults');
       
@@ -1123,7 +1044,6 @@
         document.getElementById('scanResult').innerHTML = '';
         return;
       }
-
 
       let html = '<div class="search-results">';
       results.forEach(product => {
@@ -1143,22 +1063,18 @@
       });
       html += '</div>';
 
-
       container.innerHTML = html;
       container.classList.remove('hidden');
       document.getElementById('scanResult').innerHTML = '';
     }
 
-
     window.selectSearchResult = function(productId) {
       const product = ALL_PRODUCTS.find(p => p.id == productId);
       if (!product) return;
 
-
       // Hide search results
       document.getElementById('searchResults').classList.add('hidden');
       document.getElementById('manualBarcode').value = product.barcode || product.nama;
-
 
       // Handle based on active mode
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
@@ -1172,7 +1088,6 @@
         </div>
       `;
 
-
       if (activeMode === 'kasir') {
         addToCart(product);
       } else if (activeMode === 'stock') {
@@ -1180,17 +1095,15 @@
       }
     };
 
-
     // ============================================
     // HANDLE BARCODE SCAN
     // ============================================
     
     function handleBarcodeScan(barcode) {
-      console.log('handleBarcodeScan called with:', barcode);
-      document.getElementById('manualBarcode').value = barcode;
+      // Clear all previous displays first
+      clearAllDisplays();
       
-      // Hide search results if visible
-      document.getElementById('searchResults').classList.add('hidden');
+      document.getElementById('manualBarcode').value = barcode;
       
       // Find product
       const product = ALL_PRODUCTS.find(p => p.barcode === barcode);
@@ -1198,10 +1111,8 @@
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
       
       if (!product) {
-        console.log('Product not found in handleBarcodeScan');
         // Product not found - check if in stock mode for new product creation
         if (activeMode === 'stock') {
-          console.log('Calling showNewProductForm from handleBarcodeScan');
           showNewProductForm(barcode);
         } else {
           showAlert(`Produk dengan barcode ${barcode} tidak ditemukan`, 'danger');
@@ -1212,7 +1123,6 @@
         return;
       }
 
-
       CURRENT_PRODUCT = product;
       
       document.getElementById('scanResult').innerHTML = `
@@ -1222,7 +1132,6 @@
         </div>
       `;
 
-
       // Route to appropriate handler
       if (activeMode === 'kasir') {
         addToCart(product);
@@ -1230,7 +1139,6 @@
         showStockManager(product);
       }
     }
-
 
     // ============================================
     // KASIR MODE
@@ -1241,7 +1149,6 @@
         showAlert('Stok tidak cukup!', 'danger');
         return;
       }
-
 
       const existing = CART.find(item => item.id == product.id);
       
@@ -1261,11 +1168,9 @@
         });
       }
 
-
       renderCart();
       showAlert(`${product.nama} ditambahkan ke keranjang`, 'success');
     }
-
 
     function renderCart() {
       const container = document.getElementById('cartItems');
@@ -1282,16 +1187,13 @@
         return;
       }
 
-
       container.innerHTML = '';
       let totalQty = 0;
       let totalPrice = 0;
 
-
       CART.forEach(item => {
         totalQty += item.qty;
         totalPrice += item.harga * item.qty;
-
 
         const div = document.createElement('div');
         div.className = 'cart-item';
@@ -1310,19 +1212,15 @@
         container.appendChild(div);
       });
 
-
       document.getElementById('totalItems').textContent = totalQty;
       document.getElementById('totalPrice').textContent = formatRp(totalPrice);
-
 
       calculateChange();
     }
 
-
     window.changeQty = function(id, delta) {
       const item = CART.find(i => i.id == id);
       if (!item) return;
-
 
       const newQty = item.qty + delta;
       
@@ -1331,23 +1229,19 @@
         return;
       }
 
-
       if (newQty > item.stok_available) {
         showAlert('Stok tidak cukup!', 'danger');
         return;
       }
 
-
       item.qty = newQty;
       renderCart();
     };
-
 
     window.removeItem = function(id) {
       CART = CART.filter(i => i.id != id);
       renderCart();
     };
-
 
     document.getElementById('clearCartBtn').addEventListener('click', () => {
       if (CART.length === 0) return;
@@ -1357,19 +1251,15 @@
       }
     });
 
-
     document.getElementById('paymentAmount').addEventListener('input', calculateChange);
-
 
     function calculateChange() {
       const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
       const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
       const change = payment - total;
 
-
       const changeDisplay = document.getElementById('changeDisplay');
       const changeAmount = document.getElementById('changeAmount');
-
 
       if (payment >= total && total > 0) {
         changeDisplay.classList.remove('hidden');
@@ -1385,28 +1275,23 @@
       }
     }
 
-
     document.getElementById('processBtn').addEventListener('click', async () => {
       if (CART.length === 0) {
         showAlert('Keranjang kosong!', 'danger');
         return;
       }
 
-
       const total = CART.reduce((sum, item) => sum + (item.harga * item.qty), 0);
       const payment = parseFloat(document.getElementById('paymentAmount').value) || 0;
-
 
       if (payment < total) {
         showAlert('Nominal pembayaran kurang!', 'danger');
         return;
       }
 
-
       const btn = document.getElementById('processBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Memproses...';
-
 
       try {
         // Update stock for each item
@@ -1423,13 +1308,11 @@
             })
           });
 
-
           if (!res.ok) throw new Error(`Gagal update stok ${item.nama}`);
           
           // Update local data
           product.stok = newStok;
         }
-
 
         const change = payment - total;
         
@@ -1446,7 +1329,6 @@
         document.getElementById('scanResult').innerHTML = '';
         document.getElementById('searchResults').classList.add('hidden');
 
-
       } catch (err) {
         console.error(err);
         showAlert('❌ Transaksi gagal: ' + err.message, 'danger');
@@ -1455,7 +1337,6 @@
         btn.textContent = '💳 Proses Pembayaran';
       }
     });
-
 
     function printReceipt(items, total, payment, change) {
       const now = new Date();
@@ -1505,7 +1386,6 @@ Waktu  : ${time}
       printWindow.print();
     }
 
-
     // ============================================
     // STOCK MANAGER MODE
     // ============================================
@@ -1526,37 +1406,41 @@ Waktu  : ${time}
       STOCK_OPERATION = null;
     }
 
-
     // ============================================
-    // NEW PRODUCT FORM - FIXED
+    // NEW PRODUCT FORM
     // ============================================
     
-    function showNewProductForm(barcode) {
-      console.log('showNewProductForm called with barcode:', barcode);
+    function showNewProductForm(input) {
+      // Clear all displays first
+      clearAllDisplays();
       
       // Update info display
       document.getElementById('stockInfo').innerHTML = `
         <div class="alert alert-warning" style="text-align: center;">
           <p style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">⚠️ Produk Tidak Ditemukan</p>
-          <p style="font-size: 16px;">Barcode: <strong>${barcode}</strong></p>
+          <p style="font-size: 16px;">Input: <strong>${input}</strong></p>
           <p style="font-size: 14px; margin-top: 8px; opacity: 0.8;">Silakan tambahkan produk baru di bawah ini</p>
         </div>
       `;
       
-      // Hide stock actions
-      document.getElementById('stockActions').classList.add('hidden');
-      console.log('Stock actions hidden');
-      
       // Show new product form
       const form = document.getElementById('newProductForm');
       form.classList.remove('hidden');
-      console.log('New product form shown');
       
-      // Set barcode
-      document.getElementById('newBarcode').value = barcode;
+      // Check if input is likely a barcode (numeric/alphanumeric) or product name
+      const isBarcode = /^[A-Z0-9]+$/i.test(input);
+      
+      if (isBarcode) {
+        // Input looks like barcode
+        document.getElementById('newBarcode').value = input;
+        document.getElementById('newNama').value = '';
+      } else {
+        // Input looks like product name
+        document.getElementById('newBarcode').value = '';
+        document.getElementById('newNama').value = input; // Auto-fill name
+      }
       
       // Clear other fields
-      document.getElementById('newNama').value = '';
       document.getElementById('newHarga').value = '';
       document.getElementById('newSatuan').value = 'pcs';
       document.getElementById('newStok').value = '';
@@ -1565,16 +1449,15 @@ Waktu  : ${time}
       document.getElementById('newDeskripsi').value = '';
       document.getElementById('newCatatan').value = '';
       
-      // Hide search results
-      document.getElementById('searchResults').classList.add('hidden');
-      
-      // Focus on nama field
+      // Focus on appropriate field
       setTimeout(() => {
-        document.getElementById('newNama').focus();
-        console.log('Focused on nama field');
+        if (isBarcode) {
+          document.getElementById('newNama').focus();
+        } else {
+          document.getElementById('newBarcode').focus();
+        }
       }, 100);
     }
-
 
     document.getElementById('addStockBtn').addEventListener('click', () => {
       STOCK_OPERATION = 'add';
@@ -1584,7 +1467,6 @@ Waktu  : ${time}
       document.getElementById('stockQuantity').focus();
     });
 
-
     document.getElementById('reduceStockBtn').addEventListener('click', () => {
       STOCK_OPERATION = 'reduce';
       document.getElementById('stockInputGroup').classList.remove('hidden');
@@ -1593,40 +1475,34 @@ Waktu  : ${time}
       document.getElementById('stockQuantity').focus();
     });
 
-
     document.getElementById('confirmStockBtn').addEventListener('click', async () => {
       if (!CURRENT_PRODUCT || !STOCK_OPERATION) return;
 
-
       const qty = parseInt(document.getElementById('stockQuantity').value);
       const note = document.getElementById('stockNote').value.trim();
-
 
       if (!qty || qty <= 0) {
         showAlert('Masukkan jumlah yang valid', 'danger');
         return;
       }
 
-
-      const currentStock = CURRENT_PRODUCT.stok;
+      const oldStock = CURRENT_PRODUCT.stok;
+      const satuan = CURRENT_PRODUCT.satuan || 'pcs';
       let newStock;
 
-
       if (STOCK_OPERATION === 'add') {
-        newStock = currentStock + qty;
+        newStock = oldStock + qty;
       } else {
-        newStock = currentStock - qty;
+        newStock = oldStock - qty;
         if (newStock < 0) {
           showAlert('Stok tidak boleh negatif!', 'danger');
           return;
         }
       }
 
-
       const btn = document.getElementById('confirmStockBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Memproses...';
-
 
       try {
         const res = await fetch(`${SHEET_API}/update_stok`, {
@@ -1638,14 +1514,13 @@ Waktu  : ${time}
           })
         });
 
-
         if (!res.ok) throw new Error('Gagal update stok');
-
 
         // Update local data
         CURRENT_PRODUCT.stok = newStock;
         
-        showAlert(`✅ Stok berhasil di${STOCK_OPERATION === 'add' ? 'tambah' : 'kurangi'}`, 'success');
+        // Show detailed update info
+        showStockUpdateInfo(oldStock, newStock, satuan, STOCK_OPERATION);
         
         // Refresh display
         showStockManager(CURRENT_PRODUCT);
@@ -1653,7 +1528,6 @@ Waktu  : ${time}
         // Clear inputs
         document.getElementById('manualBarcode').value = '';
         document.getElementById('scanResult').innerHTML = '';
-
 
       } catch (err) {
         console.error(err);
@@ -1664,21 +1538,50 @@ Waktu  : ${time}
       }
     });
 
+    function showStockUpdateInfo(oldStock, newStock, satuan, operation) {
+      // Remove old info box if exists
+      const oldInfo = document.getElementById('stockUpdateInfo');
+      if (oldInfo) oldInfo.remove();
+      
+      const diff = newStock - oldStock;
+      const color = operation === 'add' ? 'var(--success)' : 'var(--danger)';
+      const operationText = operation === 'add' ? 'tambah' : 'kurangi';
+      
+      const infoBox = document.createElement('div');
+      infoBox.id = 'stockUpdateInfo';
+      infoBox.style.cssText = `
+        background: ${color}22;
+        border: 2px solid ${color};
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      `;
+      infoBox.innerHTML = `
+        <div style="font-weight: 700; font-size: 16px; margin-bottom: 8px; color: ${color};">
+          ✅ Stok berhasil di${operationText}!
+        </div>
+        <div style="font-size: 14px; color: var(--dark); line-height: 1.6;">
+          <strong>📊 Detail Perubahan:</strong><br>
+          • Stok sebelumnya: <strong>${oldStock} ${satuan}</strong><br>
+          • Stok sekarang: <strong>${newStock} ${satuan}</strong><br>
+          • Perubahan: <strong style="color: ${color};">${diff > 0 ? '+' : ''}${diff} ${satuan}</strong>
+        </div>
+      `;
+      
+      // Insert before stock actions
+      const stockActions = document.getElementById('stockActions');
+      stockActions.parentNode.insertBefore(infoBox, stockActions);
+    }
 
     // Cancel new product
     document.getElementById('cancelNewProductBtn').addEventListener('click', () => {
-      document.getElementById('newProductForm').classList.add('hidden');
-      document.getElementById('stockInfo').innerHTML = `
-        <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
-      `;
+      clearAllDisplays();
       document.getElementById('manualBarcode').value = '';
-      document.getElementById('scanResult').innerHTML = '';
     });
-
 
     // Save new product
     document.getElementById('saveNewProductBtn').addEventListener('click', async () => {
-      const barcode = document.getElementById('newBarcode').value.trim();
+      let barcode = document.getElementById('newBarcode').value.trim();
       const nama = document.getElementById('newNama').value.trim();
       const harga = parseFloat(document.getElementById('newHarga').value);
       const satuan = document.getElementById('newSatuan').value;
@@ -1688,31 +1591,35 @@ Waktu  : ${time}
       const deskripsi = document.getElementById('newDeskripsi').value.trim();
       const catatan = document.getElementById('newCatatan').value.trim();
 
-
       // Validation
-      if (!barcode || !nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
+      if (!nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
         showAlert('Lengkapi semua field yang wajib diisi (*)', 'danger');
         return;
       }
-
 
       if (harga <= 0 || stok < 0) {
         showAlert('Harga harus lebih dari 0 dan stok tidak boleh negatif', 'danger');
         return;
       }
 
+      // Generate barcode if empty
+      if (!barcode) {
+        barcode = 'YF' + Date.now();
+        showAlert(`Barcode otomatis: ${barcode}`, 'info');
+      }
+
+      // Check barcode uniqueness
+      const existingProduct = ALL_PRODUCTS.find(p => p.barcode === barcode);
+      if (existingProduct) {
+        showAlert('❌ Barcode sudah digunakan oleh produk lain!', 'danger');
+        return;
+      }
 
       const btn = document.getElementById('saveNewProductBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Menyimpan...';
 
-
       try {
-        console.log('Sending data to API:', {
-          barcode, nama, harga, satuan, stok, kategori, lokasi_rak, deskripsi, catatan
-        });
-
-
         const res = await fetch(`${SHEET_API}/tambah_produk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1729,29 +1636,20 @@ Waktu  : ${time}
           })
         });
 
-
         const result = await res.json();
-        console.log('API Response:', result);
-
 
         if (!res.ok || !result.success) {
           throw new Error(result.message || 'Gagal menyimpan produk');
         }
-
 
         showAlert('✅ Produk baru berhasil ditambahkan!', 'success');
         
         // Reload products
         await loadProducts();
         
-        // Reset form
-        document.getElementById('newProductForm').classList.add('hidden');
-        document.getElementById('stockInfo').innerHTML = `
-          <p style="color: #94a3b8; font-size: 18px;">Scan barcode untuk melihat stok produk</p>
-        `;
+        // Reset display
+        clearAllDisplays();
         document.getElementById('manualBarcode').value = '';
-        document.getElementById('scanResult').innerHTML = '';
-
 
       } catch (err) {
         console.error('Error saving product:', err);
@@ -1761,7 +1659,6 @@ Waktu  : ${time}
         btn.textContent = '💾 Simpan Produk';
       }
     });
-
 
     // ============================================
     // BARCODE GENERATOR MODE
@@ -1774,10 +1671,8 @@ Waktu  : ${time}
         return;
       }
 
-
       const product = ALL_PRODUCTS.find(p => p.id == productId);
       if (!product) return;
-
 
       let barcode = product.barcode;
       
@@ -1785,7 +1680,6 @@ Waktu  : ${time}
       if (!barcode) {
         barcode = 'YF' + String(product.id).padStart(8, '0');
       }
-
 
       try {
         JsBarcode("#generated-barcode", barcode, {
@@ -1796,7 +1690,6 @@ Waktu  : ${time}
           fontSize: 16,
           margin: 10
         });
-
 
         showAlert(`Barcode generated: ${barcode}`, 'success');
         
@@ -1810,7 +1703,6 @@ Waktu  : ${time}
       }
     });
 
-
     async function updateProductBarcode(productId, barcode) {
       try {
         const res = await fetch(`${SHEET_API}/update_barcode`, {
@@ -1822,7 +1714,6 @@ Waktu  : ${time}
           })
         });
 
-
         if (res.ok) {
           const product = ALL_PRODUCTS.find(p => p.id == productId);
           if (product) product.barcode = barcode;
@@ -1833,14 +1724,12 @@ Waktu  : ${time}
       }
     }
 
-
     document.getElementById('printBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
       if (!svg.innerHTML) {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
-
 
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
@@ -1869,14 +1758,12 @@ Waktu  : ${time}
       printWindow.print();
     });
 
-
     document.getElementById('downloadBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
       if (!svg.innerHTML) {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
-
 
       // Convert SVG to PNG
       const canvas = document.createElement('canvas');
@@ -1903,7 +1790,6 @@ Waktu  : ${time}
       
       img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
     });
-
 
     // ============================================
     // INIT
