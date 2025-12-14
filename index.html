@@ -962,7 +962,7 @@
     // MANUAL INPUT & SEARCH
     // ============================================
     
-    document.getElementById('manualBtn').addEventListener('click', () => {
+    document.getElementById('manualBtn').addEventListener('click', async () => {
       const input = document.getElementById('manualBarcode').value.trim();
       
       if (!input) {
@@ -996,8 +996,8 @@
         if (activeMode === 'kasir') {
           searchProducts(input);
         } else if (activeMode === 'stock') {
-          // Show first result in stock mode
-          handleBarcodeScan(productsByName[0].barcode);
+          // In stock mode, show search results too
+          searchProductsForStock(input, productsByName);
         }
       } else {
         // No products found at all
@@ -1094,6 +1094,38 @@
         showStockManager(product);
       }
     };
+
+    // Search products for stock mode
+    function searchProductsForStock(query, results) {
+      const container = document.getElementById('searchResults');
+      
+      let html = '<div class="search-results">';
+      html += `<div style="padding: 12px; background: var(--light); border-bottom: 2px solid var(--border); font-weight: 600;">
+        Ditemukan ${results.length} produk
+      </div>`;
+      
+      results.forEach(product => {
+        html += `
+          <div class="search-result-item" onclick="selectSearchResult(${product.id})">
+            <div class="search-item-info">
+              <h4>${product.nama}</h4>
+              <div class="search-item-detail">Barcode: ${product.barcode || 'Tidak ada'}</div>
+              <div class="search-item-detail">${formatRp(product.harga)} / ${product.satuan || 'pcs'}</div>
+              <div class="search-item-detail">
+                <span class="search-item-stock">Stok: ${product.stok}</span>
+                ${product.lokasi_rak ? `<span class="search-item-location">📍 ${product.lokasi_rak}</span>` : ''}
+              </div>
+            </div>
+            <div style="font-size: 24px; color: var(--primary);">→</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      container.innerHTML = html;
+      container.classList.remove('hidden');
+      document.getElementById('scanResult').innerHTML = '';
+    }
 
     // ============================================
     // HANDLE BARCODE SCAN
@@ -1486,7 +1518,7 @@ Waktu  : ${time}
         return;
       }
 
-      const oldStock = CURRENT_PRODUCT.stok;
+      const oldStock = parseInt(CURRENT_PRODUCT.stok); // Parse to int to ensure correct calculation
       const satuan = CURRENT_PRODUCT.satuan || 'pcs';
       let newStock;
 
@@ -1499,6 +1531,13 @@ Waktu  : ${time}
           return;
         }
       }
+
+      console.log('Stock calculation:', {
+        oldStock,
+        qty,
+        operation: STOCK_OPERATION,
+        newStock
+      });
 
       const btn = document.getElementById('confirmStockBtn');
       btn.disabled = true;
@@ -1518,6 +1557,12 @@ Waktu  : ${time}
 
         // Update local data
         CURRENT_PRODUCT.stok = newStock;
+        
+        // Update in ALL_PRODUCTS array
+        const productIndex = ALL_PRODUCTS.findIndex(p => p.id === CURRENT_PRODUCT.id);
+        if (productIndex !== -1) {
+          ALL_PRODUCTS[productIndex].stok = newStock;
+        }
         
         // Show detailed update info
         showStockUpdateInfo(oldStock, newStock, satuan, STOCK_OPERATION);
@@ -1644,8 +1689,13 @@ Waktu  : ${time}
 
         showAlert('✅ Produk baru berhasil ditambahkan!', 'success');
         
-        // Reload products
+        // Reload products to get fresh data including the new product
         await loadProducts();
+        
+        // Show success message with product info
+        setTimeout(() => {
+          showAlert(`Produk "${nama}" berhasil ditambahkan dengan barcode ${barcode}`, 'success');
+        }, 500);
         
         // Reset display
         clearAllDisplays();
@@ -1799,5 +1849,3 @@ Waktu  : ${time}
   </script>
 </body>
 </html>
-
-//tes ke2
