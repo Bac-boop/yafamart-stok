@@ -609,6 +609,12 @@
     <!-- Mode Selector -->
     <div class="mode-selector">
       <h2>🏪 Yafa Mart - Sistem Toko</h2>
+      <div style="text-align: center; margin-bottom: 12px;">
+        <span id="productCount" style="color: var(--primary); font-weight: 600;">Memuat data...</span>
+        <button onclick="forceReloadProducts()" style="margin-left: 12px; padding: 4px 12px; background: var(--light); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 12px;">
+          🔄 Reload Data
+        </button>
+      </div>
       <div class="mode-buttons">
         <button class="mode-btn active" data-mode="kasir">
           <div class="icon">💰</div>
@@ -845,26 +851,84 @@
     
     async function loadProducts() {
       try {
+        // Simple approach: Just fetch from API (Worker will handle pagination)
+        console.log('Loading products from API...');
+        
         const res = await fetch(`${SHEET_API}/produk`);
+        
+        if (!res.ok) {
+          throw new Error(`API request failed: ${res.status}`);
+        }
+        
         const data = await res.json();
-        ALL_PRODUCTS = data.results || [];
+        console.log('API Response:', data);
+        
+        // Handle response format
+        if (data.results) {
+          ALL_PRODUCTS = data.results;
+        } else if (Array.isArray(data)) {
+          ALL_PRODUCTS = data;
+        } else {
+          ALL_PRODUCTS = [];
+        }
+        
+        console.log('✅ Total products loaded:', ALL_PRODUCTS.length);
         
         // Populate product select for barcode generator
-        const select = document.getElementById('productSelect');
-        select.innerHTML = '<option value="">Pilih produk...</option>';
-        ALL_PRODUCTS.forEach(p => {
-          const option = document.createElement('option');
-          option.value = p.id;
-          option.textContent = `${p.nama} - ${p.barcode || 'No Barcode'}`;
-          select.appendChild(option);
-        });
+        populateProductSelect();
         
-        console.log('Loaded products:', ALL_PRODUCTS.length);
       } catch (err) {
         console.error('Failed to load products:', err);
-        showAlert('Gagal memuat data produk', 'danger');
+        showAlert('Gagal memuat data produk: ' + err.message, 'danger');
+        
+        // Update count display with error
+        const countDisplay = document.getElementById('productCount');
+        if (countDisplay) {
+          countDisplay.textContent = '❌ Error memuat data';
+          countDisplay.style.color = 'var(--danger)';
+        }
       }
     }
+
+    async function loadAllPages() {
+      // This function is now integrated into loadProducts()
+      // Keeping it for backward compatibility but it does nothing
+      console.log('loadAllPages() called - but pagination is now handled in loadProducts()');
+    }
+
+    function populateProductSelect() {
+      const select = document.getElementById('productSelect');
+      select.innerHTML = '<option value="">Pilih produk...</option>';
+      ALL_PRODUCTS.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = `${p.nama} - ${p.barcode || 'No Barcode'}`;
+        select.appendChild(option);
+      });
+      
+      // Update product count display
+      const countDisplay = document.getElementById('productCount');
+      if (countDisplay) {
+        countDisplay.textContent = `${ALL_PRODUCTS.length} produk dimuat`;
+        countDisplay.style.color = ALL_PRODUCTS.length > 0 ? 'var(--success)' : 'var(--danger)';
+      }
+    }
+
+    window.forceReloadProducts = async function() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = '⏳ Memuat...';
+      
+      try {
+        await loadProducts();
+        showAlert(`✅ Data berhasil dimuat: ${ALL_PRODUCTS.length} produk`, 'success');
+      } catch (err) {
+        showAlert('❌ Gagal memuat data', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Reload Data';
+      }
+    };
 
     // ============================================
     // MODE SWITCHING
@@ -1026,9 +1090,14 @@
     // ============================================
     
     function searchProducts(query) {
+      console.log('Searching for:', query);
+      console.log('Total products in memory:', ALL_PRODUCTS.length);
+      
       const results = ALL_PRODUCTS.filter(p => 
         p.nama.toLowerCase().includes(query.toLowerCase())
       );
+
+      console.log('Search results found:', results.length);
 
       const container = document.getElementById('searchResults');
       
@@ -1036,7 +1105,10 @@
         container.innerHTML = `
           <div class="search-results">
             <div style="padding: 40px; text-align: center; color: #94a3b8;">
-              Tidak ada produk yang cocok dengan pencarian "${query}"
+              Tidak ada produk yang cocok dengan pencarian "${query}"<br>
+              <small style="opacity: 0.7; margin-top: 8px; display: block;">
+                Total ${ALL_PRODUCTS.length} produk dimuat
+              </small>
             </div>
           </div>
         `;
@@ -1046,6 +1118,10 @@
       }
 
       let html = '<div class="search-results">';
+      html += `<div style="padding: 12px; background: var(--light); border-bottom: 2px solid var(--border); font-weight: 600;">
+        Ditemukan ${results.length} produk dari ${ALL_PRODUCTS.length} total produk
+      </div>`;
+      
       results.forEach(product => {
         html += `
           <div class="search-result-item" onclick="selectSearchResult(${product.id})">
@@ -1097,11 +1173,14 @@
 
     // Search products for stock mode
     function searchProductsForStock(query, results) {
+      console.log('Stock mode search - Query:', query);
+      console.log('Results found:', results.length);
+      
       const container = document.getElementById('searchResults');
       
       let html = '<div class="search-results">';
       html += `<div style="padding: 12px; background: var(--light); border-bottom: 2px solid var(--border); font-weight: 600;">
-        Ditemukan ${results.length} produk
+        Ditemukan ${results.length} produk dari ${ALL_PRODUCTS.length} total produk
       </div>`;
       
       results.forEach(product => {
