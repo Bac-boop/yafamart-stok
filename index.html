@@ -635,9 +635,18 @@
     <div class="scanner-section">
       <h3 style="margin-bottom: 16px;">📷 Scanner Barcode / Cari Produk</h3>
       <div class="scanner-controls">
-        <input type="text" id="manualBarcode" placeholder="Ketik barcode atau nama produk...">
+        <input 
+          type="text" 
+          id="manualBarcode" 
+          placeholder="Scan barcode di sini atau ketik manual..."
+          autofocus
+          autocomplete="off"
+        >
         <button id="scanBtn">📷 Scan</button>
         <button id="manualBtn">🔍 Cari</button>
+      </div>
+      <div style="text-align: center; margin-top: 8px; color: var(--primary); font-size: 12px; font-weight: 600;">
+        💡 Tips: Arahkan scanner ke field input di atas, lalu scan barcode
       </div>
       <div id="scanner-container" class="hidden">
         <video id="scanner-video"></video>
@@ -776,8 +785,16 @@
           <option value="">Pilih produk...</option>
         </select>
 
+        <div id="productInfo" style="padding: 12px; background: var(--light); border-radius: 8px; margin: 16px 0; display: none;">
+          <div style="font-size: 14px; color: var(--dark);">
+            <strong>Produk:</strong> <span id="infoNama">-</span><br>
+            <strong>Barcode:</strong> <span id="infoBarcode" style="font-family: monospace; color: var(--primary);">-</span><br>
+            <strong>Harga:</strong> <span id="infoHarga">-</span>
+          </div>
+        </div>
+
         <div class="barcode-preview">
-          <p style="color: #94a3b8; margin-bottom: 20px;">Preview barcode akan muncul di sini</p>
+          <p id="previewText" style="color: #94a3b8; margin-bottom: 20px;">Preview barcode akan muncul di sini</p>
           <svg id="generated-barcode"></svg>
         </div>
 
@@ -902,7 +919,8 @@
       ALL_PRODUCTS.forEach(p => {
         const option = document.createElement('option');
         option.value = p.id;
-        option.textContent = `${p.nama} - ${p.barcode || 'No Barcode'}`;
+        const barcodeDisplay = p.barcode ? p.barcode : '(Tidak ada barcode)';
+        option.textContent = `${p.nama} - ${barcodeDisplay}`;
         select.appendChild(option);
       });
       
@@ -913,6 +931,30 @@
         countDisplay.style.color = ALL_PRODUCTS.length > 0 ? 'var(--success)' : 'var(--danger)';
       }
     }
+
+    // Show product info when selected
+    document.getElementById('productSelect').addEventListener('change', (e) => {
+      const productId = e.target.value;
+      const infoDiv = document.getElementById('productInfo');
+      
+      if (!productId) {
+        infoDiv.style.display = 'none';
+        return;
+      }
+      
+      const product = ALL_PRODUCTS.find(p => p.id == productId);
+      if (!product) return;
+      
+      document.getElementById('infoNama').textContent = product.nama;
+      document.getElementById('infoBarcode').textContent = product.barcode || '(Belum ada barcode)';
+      document.getElementById('infoHarga').textContent = formatRp(product.harga);
+      
+      infoDiv.style.display = 'block';
+      
+      // Clear previous barcode
+      document.getElementById('generated-barcode').innerHTML = '';
+      document.getElementById('previewText').style.display = 'block';
+    });
 
     window.forceReloadProducts = async function() {
       const btn = event.target;
@@ -954,6 +996,9 @@
         // Clear all displays
         clearAllDisplays();
         document.getElementById('manualBarcode').value = '';
+        
+        // Always focus input for scanner
+        focusBarcodeInput();
       });
     });
 
@@ -1081,9 +1126,29 @@
 
     document.getElementById('manualBarcode').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault(); // Prevent form submission
         document.getElementById('manualBtn').click();
       }
     });
+
+    // Auto-focus input field when page loads or mode changes
+    function focusBarcodeInput() {
+      setTimeout(() => {
+        document.getElementById('manualBarcode').focus();
+      }, 100);
+    }
+
+    // Focus on page load
+    window.addEventListener('load', focusBarcodeInput);
+
+    // Re-focus after processing barcode
+    function refocusInput() {
+      setTimeout(() => {
+        const input = document.getElementById('manualBarcode');
+        input.value = ''; // Clear input
+        input.focus(); // Focus for next scan
+      }, 500);
+    }
 
     // ============================================
     // SEARCH PRODUCTS (For Kasir Mode)
@@ -1231,6 +1296,7 @@
             <div class="alert alert-danger">❌ Produk tidak ditemukan</div>
           `;
         }
+        refocusInput(); // Re-focus for next scan
         return;
       }
 
@@ -1246,6 +1312,7 @@
       // Route to appropriate handler
       if (activeMode === 'kasir') {
         addToCart(product);
+        refocusInput(); // Auto-focus for continuous scanning
       } else if (activeMode === 'stock') {
         showStockManager(product);
       }
@@ -1795,40 +1862,55 @@ Waktu  : ${time}
     
     document.getElementById('generateBtn').addEventListener('click', () => {
       const productId = document.getElementById('productSelect').value;
+      
       if (!productId) {
         showAlert('Pilih produk terlebih dahulu', 'danger');
         return;
       }
 
       const product = ALL_PRODUCTS.find(p => p.id == productId);
-      if (!product) return;
+      
+      if (!product) {
+        showAlert('Produk tidak ditemukan', 'danger');
+        return;
+      }
 
       let barcode = product.barcode;
       
-      // Generate barcode if not exists
-      if (!barcode) {
-        barcode = 'YF' + String(product.id).padStart(8, '0');
+      // Check if product has barcode
+      if (!barcode || barcode.trim() === '') {
+        showAlert('Produk tidak memiliki barcode! Silakan tambahkan barcode terlebih dahulu.', 'warning');
+        return;
       }
 
+      console.log('Generating barcode for:', product.nama, 'Code:', barcode);
+
       try {
+        // Clear previous barcode
+        document.getElementById('generated-barcode').innerHTML = '';
+        
+        // Generate new barcode
         JsBarcode("#generated-barcode", barcode, {
           format: "CODE128",
           width: 2,
           height: 80,
           displayValue: true,
           fontSize: 16,
-          margin: 10
+          margin: 10,
+          background: "#ffffff",
+          lineColor: "#000000"
         });
 
-        showAlert(`Barcode generated: ${barcode}`, 'success');
+        // Hide preview text, show barcode
+        document.getElementById('previewText').style.display = 'none';
+
+        showAlert(`✅ Barcode berhasil di-generate untuk: ${product.nama}`, 'success');
         
-        // Save barcode if newly generated
-        if (!product.barcode) {
-          updateProductBarcode(product.id, barcode);
-        }
+        console.log('Barcode generated successfully');
+        
       } catch (err) {
-        console.error(err);
-        showAlert('Gagal generate barcode', 'danger');
+        console.error('Barcode generation error:', err);
+        showAlert('❌ Gagal generate barcode: ' + err.message, 'danger');
       }
     });
 
@@ -1855,69 +1937,108 @@ Waktu  : ${time}
 
     document.getElementById('printBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
-      if (!svg.innerHTML) {
+      
+      if (!svg || !svg.innerHTML || svg.innerHTML.trim() === '') {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
 
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Print Barcode</title>
-            <style>
-              body { 
-                display: flex; 
-                justify-content: center; 
-                align-items: center; 
-                height: 100vh; 
-                margin: 0; 
-              }
-              @media print { 
-                body { margin: 20px; } 
-              }
-            </style>
-          </head>
-          <body>
-            ${svg.outerHTML}
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-      printWindow.print();
+      try {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Print Barcode</title>
+              <style>
+                body { 
+                  display: flex; 
+                  justify-content: center; 
+                  align-items: center; 
+                  height: 100vh; 
+                  margin: 0;
+                  font-family: Arial, sans-serif;
+                }
+                .barcode-container {
+                  text-align: center;
+                  padding: 20px;
+                }
+                @media print { 
+                  body { 
+                    margin: 0; 
+                    padding: 10px; 
+                  } 
+                }
+              </style>
+            </head>
+            <body>
+              <div class="barcode-container">
+                ${svg.outerHTML}
+              </div>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        
+        // Wait a bit for content to load, then print
+        setTimeout(() => {
+          printWindow.print();
+        }, 250);
+        
+      } catch (err) {
+        console.error('Print error:', err);
+        showAlert('❌ Gagal print barcode', 'danger');
+      }
     });
 
     document.getElementById('downloadBarcodeBtn').addEventListener('click', () => {
       const svg = document.getElementById('generated-barcode');
-      if (!svg.innerHTML) {
+      
+      if (!svg || !svg.innerHTML || svg.innerHTML.trim() === '') {
         showAlert('Generate barcode terlebih dahulu', 'danger');
         return;
       }
 
-      // Convert SVG to PNG
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const img = new Image();
-      
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+      try {
+        // Get product name for filename
+        const productId = document.getElementById('productSelect').value;
+        const product = ALL_PRODUCTS.find(p => p.id == productId);
+        const filename = product ? `barcode_${product.nama.replace(/[^a-z0-9]/gi, '_')}.png` : 'barcode.png';
+
+        // Convert SVG to PNG
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const img = new Image();
         
-        canvas.toBlob((blob) => {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'barcode.png';
-          a.click();
-          URL.revokeObjectURL(url);
-        });
-      };
-      
-      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            showAlert('✅ Barcode berhasil didownload', 'success');
+          });
+        };
+        
+        img.onerror = (err) => {
+          console.error('Image load error:', err);
+          showAlert('❌ Gagal convert barcode ke gambar', 'danger');
+        };
+        
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+        
+      } catch (err) {
+        console.error('Download error:', err);
+        showAlert('❌ Gagal download barcode: ' + err.message, 'danger');
+      }
     });
 
     // ============================================
