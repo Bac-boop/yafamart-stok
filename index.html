@@ -29,28 +29,50 @@
       background: var(--light);
       color: var(--dark);
       padding-bottom: 20px;
+      overflow-x: hidden;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 8px;
+      }
+      
+      body {
+        font-size: 14px;
+      }
     }
 
     /* Mode Selector */
     .mode-selector {
       background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .mode-selector h2 {
-      margin-bottom: 16px;
-      font-size: 20px;
+      margin-bottom: 8px;
+      font-size: 18px;
       text-align: center;
       color: var(--dark);
+    }
+
+    @media (max-width: 768px) {
+      .mode-selector h2 {
+        font-size: 16px;
+      }
+      
+      .mode-selector {
+        padding: 10px;
+        margin-bottom: 10px;
+      }
     }
 
     .mode-buttons {
@@ -60,15 +82,27 @@
     }
 
     .mode-btn {
-      padding: 20px;
+      padding: 16px 12px;
       border: 2px solid var(--border);
       border-radius: 12px;
       background: white;
       cursor: pointer;
       transition: all 0.3s;
       text-align: center;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .mode-btn {
+        padding: 12px 8px;
+        font-size: 12px;
+      }
+      
+      .mode-btn .icon {
+        font-size: 24px !important;
+        margin-bottom: 4px !important;
+      }
     }
 
     .mode-btn:hover {
@@ -99,35 +133,71 @@
     /* Scanner */
     .scanner-section {
       background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .scanner-section h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .scanner-section {
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .scanner-section h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
     }
 
     .scanner-controls {
       display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
 
     .scanner-controls input {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       border: 2px solid var(--border);
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .scanner-controls button {
-      padding: 12px 24px;
+      padding: 10px 16px;
       background: var(--primary);
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: 600;
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .scanner-controls {
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      
+      .scanner-controls input {
+        padding: 8px;
+        font-size: 13px;
+      }
+      
+      .scanner-controls button {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
     }
 
     .scanner-controls button:hover {
@@ -781,6 +851,16 @@
       <div class="barcode-generator">
         <h3 style="margin-bottom: 16px;">🏷️ Generate Barcode Produk</h3>
         
+        <!-- Search Box -->
+        <input 
+          type="text" 
+          id="barcodeSearch" 
+          class="product-select" 
+          placeholder="🔍 Cari produk (ketik nama produk)..."
+          style="margin-bottom: 12px;"
+        >
+        
+        <!-- Dropdown Select -->
         <select class="product-select" id="productSelect">
           <option value="">Pilih produk...</option>
         </select>
@@ -1124,12 +1204,105 @@
       }
     });
 
-    document.getElementById('manualBarcode').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault(); // Prevent form submission
-        document.getElementById('manualBtn').click();
+    // ============================================
+    // AUTO-SEARCH FUNCTIONALITY
+    // ============================================
+    
+    let searchTimeout = null;
+
+    // Auto-search untuk scanner barcode input (Kasir & Kelola Stok)
+    document.getElementById('manualBarcode').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      
+      const input = e.target.value.trim();
+      
+      if (input.length === 0) {
+        // Clear results when input is empty
+        document.getElementById('searchResults').classList.add('hidden');
+        document.getElementById('scanResult').innerHTML = '';
+        return;
+      }
+      
+      // Wait 500ms after user stops typing
+      searchTimeout = setTimeout(() => {
+        performAutoSearch(input);
+      }, 500);
+    });
+
+    // Auto-search untuk Generate Barcode
+    document.getElementById('barcodeSearch').addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      const select = document.getElementById('productSelect');
+      
+      if (query.length === 0) {
+        // Show all products
+        populateProductSelect();
+        return;
+      }
+      
+      // Filter products
+      const filtered = ALL_PRODUCTS.filter(p => 
+        p.nama.toLowerCase().includes(query) ||
+        (p.barcode && p.barcode.toLowerCase().includes(query))
+      );
+      
+      // Update dropdown
+      select.innerHTML = '<option value="">Pilih produk...</option>';
+      filtered.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        const barcodeDisplay = p.barcode ? p.barcode : '(Tidak ada barcode)';
+        option.textContent = `${p.nama} - ${barcodeDisplay}`;
+        select.appendChild(option);
+      });
+      
+      // Auto-select if only one result
+      if (filtered.length === 1) {
+        select.value = filtered[0].id;
+        select.dispatchEvent(new Event('change'));
       }
     });
+
+    function performAutoSearch(input) {
+      const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
+      
+      // Try to find exact barcode match first
+      const productByBarcode = ALL_PRODUCTS.find(p => p.barcode === input);
+      
+      if (productByBarcode) {
+        handleBarcodeScan(input);
+        return;
+      }
+      
+      // Search by name
+      const productsByName = ALL_PRODUCTS.filter(p => 
+        p.nama.toLowerCase().includes(input.toLowerCase())
+      );
+      
+      if (productsByName.length > 0) {
+        if (activeMode === 'kasir') {
+          searchProducts(input);
+        } else if (activeMode === 'stock') {
+          searchProductsForStock(input, productsByName);
+        }
+      } else {
+        // No products found
+        if (activeMode === 'stock') {
+          // Don't show form immediately for auto-search
+          document.getElementById('scanResult').innerHTML = `
+            <div class="alert alert-warning">
+              Tidak ditemukan produk dengan kata kunci "${input}"
+            </div>
+          `;
+        } else if (activeMode === 'kasir') {
+          document.getElementById('scanResult').innerHTML = `
+            <div class="alert alert-danger">
+              ❌ Produk "${input}" tidak ditemukan
+            </div>
+          `;
+        }
+      }
+    }
 
     // Auto-focus input field when page loads or mode changes
     function focusBarcodeInput() {
@@ -2048,4 +2221,4 @@ Waktu  : ${time}
     loadProducts();
   </script>
 </body>
-</html>
+          </html>
