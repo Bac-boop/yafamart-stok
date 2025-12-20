@@ -928,18 +928,30 @@
     // ============================================
     
     function loadCategories() {
-      const stored = localStorage.getItem('yafamart_categories');
-      if (stored) {
-        CATEGORIES = JSON.parse(stored);
-      } else {
-        // Default categories
+      try {
+        const stored = localStorage.getItem('yafamart_categories');
+        if (stored) {
+          CATEGORIES = JSON.parse(stored);
+        } else {
+          // Default categories
+          CATEGORIES = ['Sembako', 'ATK', 'Minuman', 'Makanan', 'Snack', 'Frozen Food'];
+          saveCategories();
+        }
+        console.log('Categories loaded:', CATEGORIES);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+        // Fallback to default
         CATEGORIES = ['Sembako', 'ATK', 'Minuman', 'Makanan', 'Snack', 'Frozen Food'];
-        saveCategories();
       }
     }
 
     function saveCategories() {
-      localStorage.setItem('yafamart_categories', JSON.stringify(CATEGORIES));
+      try {
+        localStorage.setItem('yafamart_categories', JSON.stringify(CATEGORIES));
+        console.log('Categories saved:', CATEGORIES);
+      } catch (err) {
+        console.error('Error saving categories:', err);
+      }
     }
 
     function addCategory(name) {
@@ -968,6 +980,8 @@
 
     function renderCategoryDropdown() {
       const select = document.getElementById('newKategori');
+      if (!select) return; // Guard clause
+      
       select.innerHTML = '<option value="">Pilih kategori...</option>';
       
       CATEGORIES.forEach(cat => {
@@ -1045,8 +1059,14 @@
     
     async function loadProducts() {
       try {
-        // Simple approach: Just fetch from API (Worker will handle pagination)
-        console.log('Loading products from API...');
+        console.log('Starting to load products...');
+        
+        // Update UI to show loading
+        const countDisplay = document.getElementById('productCount');
+        if (countDisplay) {
+          countDisplay.textContent = 'Memuat data...';
+          countDisplay.style.color = 'var(--primary)';
+        }
         
         const res = await fetch(`${SHEET_API}/produk`);
         
@@ -1063,6 +1083,7 @@
         } else if (Array.isArray(data)) {
           ALL_PRODUCTS = data;
         } else {
+          console.error('Unexpected API response format:', data);
           ALL_PRODUCTS = [];
         }
         
@@ -1073,7 +1094,12 @@
         
       } catch (err) {
         console.error('Failed to load products:', err);
-        showAlert('Gagal memuat data produk: ' + err.message, 'danger');
+        
+        // Show error but don't block the app
+        showAlert('⚠️ Gagal memuat data produk. Coba reload halaman.', 'warning');
+        
+        // Set empty products array so app can still work
+        ALL_PRODUCTS = [];
         
         // Update count display with error
         const countDisplay = document.getElementById('productCount');
@@ -1081,6 +1107,9 @@
           countDisplay.textContent = '❌ Error memuat data';
           countDisplay.style.color = 'var(--danger)';
         }
+        
+        // Still populate empty select
+        populateProductSelect();
       }
     }
 
@@ -1092,46 +1121,67 @@
 
     function populateProductSelect() {
       const select = document.getElementById('productSelect');
+      if (!select) return; // Guard clause
+      
       select.innerHTML = '<option value="">Pilih produk...</option>';
-      ALL_PRODUCTS.forEach(p => {
+      
+      if (ALL_PRODUCTS.length === 0) {
         const option = document.createElement('option');
-        option.value = p.id;
-        const barcodeDisplay = p.barcode ? p.barcode : '(Tidak ada barcode)';
-        option.textContent = `${p.nama} - ${barcodeDisplay}`;
+        option.value = '';
+        option.textContent = '(Tidak ada produk)';
+        option.disabled = true;
         select.appendChild(option);
-      });
+      } else {
+        ALL_PRODUCTS.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.id;
+          const barcodeDisplay = p.barcode ? p.barcode : '(Tidak ada barcode)';
+          option.textContent = `${p.nama} - ${barcodeDisplay}`;
+          select.appendChild(option);
+        });
+      }
       
       // Update product count display
       const countDisplay = document.getElementById('productCount');
       if (countDisplay) {
-        countDisplay.textContent = `${ALL_PRODUCTS.length} produk dimuat`;
-        countDisplay.style.color = ALL_PRODUCTS.length > 0 ? 'var(--success)' : 'var(--danger)';
+        if (ALL_PRODUCTS.length > 0) {
+          countDisplay.textContent = `${ALL_PRODUCTS.length} produk dimuat`;
+          countDisplay.style.color = 'var(--success)';
+        } else {
+          countDisplay.textContent = 'Tidak ada produk';
+          countDisplay.style.color = 'var(--warning)';
+        }
       }
     }
 
     // Show product info when selected
-    document.getElementById('productSelect').addEventListener('change', (e) => {
-      const productId = e.target.value;
-      const infoDiv = document.getElementById('productInfo');
-      
-      if (!productId) {
-        infoDiv.style.display = 'none';
-        return;
-      }
-      
-      const product = ALL_PRODUCTS.find(p => p.id == productId);
-      if (!product) return;
-      
-      document.getElementById('infoNama').textContent = product.nama;
-      document.getElementById('infoBarcode').textContent = product.barcode || '(Belum ada barcode)';
-      document.getElementById('infoHarga').textContent = formatRp(product.harga);
-      
-      infoDiv.style.display = 'block';
-      
-      // Clear previous barcode
-      document.getElementById('generated-barcode').innerHTML = '';
-      document.getElementById('previewText').style.display = 'block';
-    });
+    const productSelectElement = document.getElementById('productSelect');
+    if (productSelectElement) {
+      productSelectElement.addEventListener('change', (e) => {
+        const productId = e.target.value;
+        const infoDiv = document.getElementById('productInfo');
+        
+        if (!productId) {
+          if (infoDiv) infoDiv.style.display = 'none';
+          return;
+        }
+        
+        const product = ALL_PRODUCTS.find(p => p.id == productId);
+        if (!product) return;
+        
+        document.getElementById('infoNama').textContent = product.nama;
+        document.getElementById('infoBarcode').textContent = product.barcode || '(Belum ada barcode)';
+        document.getElementById('infoHarga').textContent = formatRp(product.harga);
+        
+        if (infoDiv) infoDiv.style.display = 'block';
+        
+        // Clear previous barcode
+        const barcodeElement = document.getElementById('generated-barcode');
+        const previewText = document.getElementById('previewText');
+        if (barcodeElement) barcodeElement.innerHTML = '';
+        if (previewText) previewText.style.display = 'block';
+      });
+    }
 
     window.forceReloadProducts = async function() {
       const btn = event.target;
@@ -1140,13 +1190,42 @@
       
       try {
         await loadProducts();
-        showAlert(`✅ Data berhasil dimuat: ${ALL_PRODUCTS.length} produk`, 'success');
+        if (ALL_PRODUCTS.length > 0) {
+          showAlert(`✅ Data berhasil dimuat: ${ALL_PRODUCTS.length} produk`, 'success');
+        } else {
+          showAlert('⚠️ Data dimuat tapi kosong. Periksa Worker API.', 'warning');
+        }
       } catch (err) {
-        showAlert('❌ Gagal memuat data', 'danger');
+        console.error('Reload error:', err);
+        showAlert('❌ Gagal memuat data: ' + err.message, 'danger');
       } finally {
         btn.disabled = false;
         btn.textContent = '🔄 Reload Data';
       }
+    };
+
+    // Debug function - can be called from console
+    window.debugYafaMart = function() {
+      console.log('=== YAFA MART DEBUG INFO ===');
+      console.log('API URL:', SHEET_API);
+      console.log('Products loaded:', ALL_PRODUCTS.length);
+      console.log('Categories:', CATEGORIES);
+      console.log('Cart items:', CART.length);
+      console.log('Current product:', CURRENT_PRODUCT);
+      console.log('Scanner active:', SCANNER_ACTIVE);
+      
+      // Test API
+      fetch(`${SHEET_API}/produk`)
+        .then(res => {
+          console.log('API Status:', res.status);
+          return res.json();
+        })
+        .then(data => {
+          console.log('API Response:', data);
+        })
+        .catch(err => {
+          console.error('API Error:', err);
+        });
     };
 
     // ============================================
@@ -1942,28 +2021,31 @@ Waktu  : ${time}
     }
 
     // Handle category dropdown change
-    document.getElementById('newKategori').addEventListener('change', (e) => {
-      const value = e.target.value;
-      
-      if (value === '__ADD_NEW__') {
-        // Add new category
-        const newCategory = prompt('Masukkan nama kategori baru:');
-        if (newCategory) {
-          if (addCategory(newCategory)) {
-            showAlert(`✅ Kategori "${newCategory}" berhasil ditambahkan`, 'success');
-            renderCategoryDropdown();
-            // Auto-select the new category
-            document.getElementById('newKategori').value = newCategory;
+    const kategoriSelect = document.getElementById('newKategori');
+    if (kategoriSelect) {
+      kategoriSelect.addEventListener('change', (e) => {
+        const value = e.target.value;
+        
+        if (value === '__ADD_NEW__') {
+          // Add new category
+          const newCategory = prompt('Masukkan nama kategori baru:');
+          if (newCategory) {
+            if (addCategory(newCategory)) {
+              showAlert(`✅ Kategori "${newCategory}" berhasil ditambahkan`, 'success');
+              renderCategoryDropdown();
+              // Auto-select the new category
+              document.getElementById('newKategori').value = newCategory;
+            }
+          } else {
+            // Reset to empty if cancelled
+            document.getElementById('newKategori').value = '';
           }
-        } else {
-          // Reset to empty if cancelled
-          document.getElementById('newKategori').value = '';
+        } else if (value === '__MANAGE__') {
+          // Manage categories
+          showCategoryManager();
         }
-      } else if (value === '__MANAGE__') {
-        // Manage categories
-        showCategoryManager();
-      }
-    });
+      });
+    }
 
     function showCategoryManager() {
       const categoryList = CATEGORIES.map((cat, index) => 
@@ -2421,11 +2503,19 @@ Waktu  : ${time}
     // INIT
     // ============================================
     
-    // Load categories first
-    loadCategories();
+    // Initialize app
+    console.log('🚀 Yafa Mart POS Initializing...');
     
-    // Then load products
-    loadProducts();
+    // Load categories first (synchronous from localStorage)
+    loadCategories();
+    console.log('✅ Categories loaded');
+    
+    // Then load products (asynchronous from API)
+    loadProducts().then(() => {
+      console.log('✅ App ready!');
+    }).catch(err => {
+      console.error('❌ Init error:', err);
+    });
   </script>
 </body>
-  </html>
+              </html>
