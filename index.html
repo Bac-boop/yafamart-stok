@@ -563,11 +563,27 @@
       border: 2px solid var(--border);
       border-radius: 8px;
       font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(91, 156, 229, 0.1);
     }
 
     .form-group textarea {
       resize: vertical;
       min-height: 80px;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #64748b;
     }
 
     .form-actions {
@@ -807,6 +823,13 @@
           <input type="number" id="newHarga" placeholder="Contoh: 75000" required>
         </div>
         <div class="form-group">
+          <label>Aktif Diskon</label>
+          <input type="text" id="newAktifDiskon" value="FALSE" readonly style="background: var(--light); color: #64748b; cursor: not-allowed;">
+          <small style="color: #64748b; font-size: 12px; display: block; margin-top: 4px;">
+            ℹ️ Produk baru default tidak aktif diskon. Edit manual di database jika diperlukan.
+          </small>
+        </div>
+        <div class="form-group">
           <label>Satuan *</label>
           <select id="newSatuan" required>
             <option value="pcs">Pcs</option>
@@ -825,7 +848,9 @@
         </div>
         <div class="form-group">
           <label>Kategori *</label>
-          <input type="text" id="newKategori" placeholder="Contoh: Sembako" required>
+          <select id="newKategori" required>
+            <option value="">Pilih kategori...</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Lokasi Rak *</label>
@@ -896,6 +921,78 @@
     let CURRENT_PRODUCT = null;
     let SCANNER_ACTIVE = false;
     let STOCK_OPERATION = null;
+    let CATEGORIES = []; // Dynamic categories from localStorage
+
+    // ============================================
+    // CATEGORY MANAGEMENT
+    // ============================================
+    
+    function loadCategories() {
+      const stored = localStorage.getItem('yafamart_categories');
+      if (stored) {
+        CATEGORIES = JSON.parse(stored);
+      } else {
+        // Default categories
+        CATEGORIES = ['Sembako', 'ATK', 'Minuman', 'Makanan', 'Snack', 'Frozen Food'];
+        saveCategories();
+      }
+    }
+
+    function saveCategories() {
+      localStorage.setItem('yafamart_categories', JSON.stringify(CATEGORIES));
+    }
+
+    function addCategory(name) {
+      const trimmed = name.trim();
+      if (!trimmed) return false;
+      
+      if (CATEGORIES.includes(trimmed)) {
+        showAlert('Kategori sudah ada!', 'warning');
+        return false;
+      }
+      
+      CATEGORIES.push(trimmed);
+      saveCategories();
+      return true;
+    }
+
+    function deleteCategory(name) {
+      const index = CATEGORIES.indexOf(name);
+      if (index > -1) {
+        CATEGORIES.splice(index, 1);
+        saveCategories();
+        return true;
+      }
+      return false;
+    }
+
+    function renderCategoryDropdown() {
+      const select = document.getElementById('newKategori');
+      select.innerHTML = '<option value="">Pilih kategori...</option>';
+      
+      CATEGORIES.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+      
+      // Add "Buat Baru" option
+      const addOption = document.createElement('option');
+      addOption.value = '__ADD_NEW__';
+      addOption.textContent = '➕ Buat Kategori Baru';
+      addOption.style.fontWeight = 'bold';
+      addOption.style.color = 'var(--primary)';
+      select.appendChild(addOption);
+      
+      // Add "Kelola" option
+      const manageOption = document.createElement('option');
+      manageOption.value = '__MANAGE__';
+      manageOption.textContent = '✏️ Kelola Kategori';
+      manageOption.style.fontWeight = 'bold';
+      manageOption.style.color = 'var(--warning)';
+      select.appendChild(manageOption);
+    }
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -1761,9 +1858,26 @@ Waktu  : ${time}
     // NEW PRODUCT FORM
     // ============================================
     
+    function detectInputType(input) {
+      // Pattern: angka saja (barcode)
+      if (/^\d+$/.test(input)) return 'barcode';
+      
+      // Pattern: 2 huruf + angka (barcode seperti YF123456)
+      if (/^[A-Z]{2}\d+$/i.test(input)) return 'barcode';
+      
+      // Pattern: huruf saja atau huruf dengan spasi (nama produk)
+      if (/^[A-Za-z\s]+$/.test(input)) return 'nama';
+      
+      // Mixed/unknown - treat as nama
+      return 'nama';
+    }
+
     function showNewProductForm(input) {
       // Clear all displays first
       clearAllDisplays();
+      
+      // Detect input type
+      const inputType = detectInputType(input);
       
       // Update info display
       document.getElementById('stockInfo').innerHTML = `
@@ -1778,39 +1892,121 @@ Waktu  : ${time}
       const form = document.getElementById('newProductForm');
       form.classList.remove('hidden');
       
-      // Check if input is likely a barcode (numeric/alphanumeric) or product name
-      const isBarcode = /^[A-Z0-9]+$/i.test(input);
-      
-      if (isBarcode) {
-        // Input looks like barcode
+      // Smart auto-fill based on input type
+      if (inputType === 'barcode') {
+        // Input adalah barcode
         document.getElementById('newBarcode').value = input;
         document.getElementById('newNama').value = '';
+        
+        // Visual feedback - highlight barcode field
+        const barcodeField = document.getElementById('newBarcode');
+        barcodeField.style.background = '#d1fae5';
+        setTimeout(() => {
+          barcodeField.style.background = '';
+        }, 1000);
+        
+        // Focus on nama field
+        setTimeout(() => {
+          document.getElementById('newNama').focus();
+        }, 100);
+        
       } else {
-        // Input looks like product name
+        // Input adalah nama produk
         document.getElementById('newBarcode').value = '';
-        document.getElementById('newNama').value = input; // Auto-fill name
+        document.getElementById('newNama').value = input;
+        
+        // Visual feedback - highlight nama field
+        const namaField = document.getElementById('newNama');
+        namaField.style.background = '#d1fae5';
+        setTimeout(() => {
+          namaField.style.background = '';
+        }, 1000);
+        
+        // Focus on barcode field (optional field)
+        setTimeout(() => {
+          document.getElementById('newBarcode').focus();
+        }, 100);
       }
       
       // Clear other fields
       document.getElementById('newHarga').value = '';
       document.getElementById('newSatuan').value = 'pcs';
       document.getElementById('newStok').value = '';
-      document.getElementById('newKategori').value = '';
+      document.getElementById('newAktifDiskon').value = 'FALSE';
       document.getElementById('newLokasiRak').value = '';
       document.getElementById('newDeskripsi').value = '';
       document.getElementById('newCatatan').value = '';
       
-      // Focus on appropriate field
-      setTimeout(() => {
-        if (isBarcode) {
-          document.getElementById('newNama').focus();
-        } else {
-          document.getElementById('newBarcode').focus();
-        }
-      }, 100);
+      // Render category dropdown
+      renderCategoryDropdown();
     }
 
-    document.getElementById('addStockBtn').addEventListener('click', () => {
+    // Handle category dropdown change
+    document.getElementById('newKategori').addEventListener('change', (e) => {
+      const value = e.target.value;
+      
+      if (value === '__ADD_NEW__') {
+        // Add new category
+        const newCategory = prompt('Masukkan nama kategori baru:');
+        if (newCategory) {
+          if (addCategory(newCategory)) {
+            showAlert(`✅ Kategori "${newCategory}" berhasil ditambahkan`, 'success');
+            renderCategoryDropdown();
+            // Auto-select the new category
+            document.getElementById('newKategori').value = newCategory;
+          }
+        } else {
+          // Reset to empty if cancelled
+          document.getElementById('newKategori').value = '';
+        }
+      } else if (value === '__MANAGE__') {
+        // Manage categories
+        showCategoryManager();
+      }
+    });
+
+    function showCategoryManager() {
+      const categoryList = CATEGORIES.map((cat, index) => 
+        `${index + 1}. ${cat}`
+      ).join('\n');
+      
+      const message = `📋 Kategori Saat Ini:\n\n${categoryList}\n\nKetik nomor untuk menghapus kategori (pisahkan dengan koma jika lebih dari satu)\nContoh: 2,4\n\nAtau ketik "batal" untuk kembali`;
+      
+      const input = prompt(message);
+      
+      if (!input || input.toLowerCase() === 'batal') {
+        document.getElementById('newKategori').value = '';
+        return;
+      }
+      
+      // Parse input
+      const numbers = input.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+      
+      if (numbers.length === 0) {
+        showAlert('Input tidak valid', 'danger');
+        document.getElementById('newKategori').value = '';
+        return;
+      }
+      
+      // Delete categories (sort descending to avoid index issues)
+      const toDelete = numbers.sort((a, b) => b - a).map(n => CATEGORIES[n - 1]).filter(Boolean);
+      
+      if (toDelete.length === 0) {
+        showAlert('Nomor kategori tidak valid', 'danger');
+        document.getElementById('newKategori').value = '';
+        return;
+      }
+      
+      const confirmMsg = `Hapus kategori berikut?\n\n${toDelete.join('\n')}\n\nPerhatian: Produk dengan kategori ini tidak akan terhapus, hanya opsi kategorinya.`;
+      
+      if (confirm(confirmMsg)) {
+        toDelete.forEach(cat => deleteCategory(cat));
+        showAlert(`✅ ${toDelete.length} kategori berhasil dihapus`, 'success');
+        renderCategoryDropdown();
+      }
+      
+      document.getElementById('newKategori').value = '';
+    }
       STOCK_OPERATION = 'add';
       document.getElementById('stockInputGroup').classList.remove('hidden');
       document.getElementById('stockQuantity').value = '';
@@ -1950,14 +2146,20 @@ Waktu  : ${time}
       const harga = parseFloat(document.getElementById('newHarga').value);
       const satuan = document.getElementById('newSatuan').value;
       const stok = parseInt(document.getElementById('newStok').value);
-      const kategori = document.getElementById('newKategori').value.trim();
+      const kategori = document.getElementById('newKategori').value;
       const lokasi_rak = document.getElementById('newLokasiRak').value.trim();
       const deskripsi = document.getElementById('newDeskripsi').value.trim();
       const catatan = document.getElementById('newCatatan').value.trim();
+      const aktif_diskon = 'FALSE'; // Always FALSE for new products
 
       // Validation
       if (!nama || !harga || isNaN(stok) || !kategori || !lokasi_rak) {
         showAlert('Lengkapi semua field yang wajib diisi (*)', 'danger');
+        return;
+      }
+
+      if (kategori === '__ADD_NEW__' || kategori === '__MANAGE__') {
+        showAlert('Pilih kategori yang valid', 'danger');
         return;
       }
 
@@ -1996,7 +2198,8 @@ Waktu  : ${time}
             kategori,
             lokasi_rak,
             deskripsi,
-            catatan
+            catatan,
+            aktif_diskon // Send aktif_diskon field
           })
         });
 
@@ -2218,7 +2421,11 @@ Waktu  : ${time}
     // INIT
     // ============================================
     
+    // Load categories first
+    loadCategories();
+    
+    // Then load products
     loadProducts();
   </script>
 </body>
-          </html>
+  </html>
