@@ -1296,10 +1296,13 @@
     function performAutoSearch(input) {
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
       
+      console.log('performAutoSearch - Input:', input, 'Mode:', activeMode);
+      
       // Try to find exact barcode match first
       const productByBarcode = ALL_PRODUCTS.find(p => p.barcode === input);
       
       if (productByBarcode) {
+        console.log('Product found by barcode');
         handleBarcodeScan(input);
         return;
       }
@@ -1310,6 +1313,7 @@
       );
       
       if (productsByName.length > 0) {
+        console.log('Products found by name:', productsByName.length);
         if (activeMode === 'kasir') {
           searchProducts(input);
         } else if (activeMode === 'stock') {
@@ -1317,14 +1321,16 @@
         }
       } else {
         // No products found
+        console.log('No products found - input:', input);
+        
+        // Detect if input is barcode or name
+        const isBarcode = detectBarcode(input);
+        console.log('Detected as barcode:', isBarcode);
+        
         if (activeMode === 'stock') {
-          // In stock mode, show warning but DON'T auto-show form for auto-search
-          // User must click "Cari" button to trigger form
-          document.getElementById('scanResult').innerHTML = `
-            <div class="alert alert-warning">
-              Tidak ditemukan produk dengan kata kunci "${input}"
-            </div>
-          `;
+          // MODE KELOLA STOK → Show form for auto-search too
+          console.log('Showing new product form from auto-search');
+          showNewProductForm(input);
         } else if (activeMode === 'kasir') {
           document.getElementById('scanResult').innerHTML = `
             <div class="alert alert-danger">
@@ -2309,4 +2315,4 @@ Waktu  : ${time}
     loadProducts();
   </script>
 </body>
-                                         </html>
+  </html>
