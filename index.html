@@ -1177,6 +1177,10 @@
     // MANUAL INPUT & SEARCH
     // ============================================
     
+    // ============================================
+    // MANUAL INPUT & SEARCH
+    // ============================================
+    
     document.getElementById('manualBtn').addEventListener('click', async () => {
       const input = document.getElementById('manualBarcode').value.trim();
       
@@ -1217,7 +1221,7 @@
       } else {
         // No products found at all
         if (activeMode === 'stock') {
-          // MODE KELOLA STOK → Show new product form
+          // MODE KELOLA STOK → Show new product form (for both barcode and name)
           showNewProductForm(input);
         } else if (activeMode === 'kasir') {
           // MODE KASIR → Show not found message
@@ -1314,7 +1318,8 @@
       } else {
         // No products found
         if (activeMode === 'stock') {
-          // Don't show form immediately for auto-search
+          // In stock mode, show warning but DON'T auto-show form for auto-search
+          // User must click "Cari" button to trigger form
           document.getElementById('scanResult').innerHTML = `
             <div class="alert alert-warning">
               Tidak ditemukan produk dengan kata kunci "${input}"
@@ -1475,6 +1480,8 @@
     // ============================================
     
     function handleBarcodeScan(barcode) {
+      console.log('handleBarcodeScan called with:', barcode);
+      
       // Clear all previous displays first
       clearAllDisplays();
       
@@ -1484,12 +1491,19 @@
       const product = ALL_PRODUCTS.find(p => p.barcode === barcode);
       
       const activeMode = document.querySelector('.mode-btn.active').dataset.mode;
+      console.log('Active mode:', activeMode);
+      console.log('Product found:', product ? product.nama : 'NOT FOUND');
       
       if (!product) {
-        // Product not found - check if in stock mode for new product creation
+        // Product not found
+        console.log('Product not found - checking mode for form display');
+        
         if (activeMode === 'stock') {
+          // MODE KELOLA STOK → Show new product form
+          console.log('Showing new product form for barcode:', barcode);
           showNewProductForm(barcode);
-        } else {
+        } else if (activeMode === 'kasir') {
+          // MODE KASIR → Just show error
           showAlert(`Produk dengan barcode ${barcode} tidak ditemukan`, 'danger');
           document.getElementById('scanResult').innerHTML = `
             <div class="alert alert-danger">❌ Produk tidak ditemukan</div>
@@ -2295,4 +2309,4 @@ Waktu  : ${time}
     loadProducts();
   </script>
 </body>
-  </html>
+                                         </html>
